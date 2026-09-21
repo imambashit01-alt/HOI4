@@ -3,8 +3,9 @@ import {
   Truck, Fuel, Gauge, AlertTriangle, CheckCircle2, ShieldAlert,
   Train, Anchor, Wind, MapPin, Compass, Layers, BookOpen,
   Info, Sparkles, RotateCcw, Copy, Check, ChevronDown,
-  ArrowRight, Shield, Zap, Activity, Clock, Sliders, Box
+  ArrowRight, Shield, Zap, Activity, Clock, Sliders, Box, Swords
 } from 'lucide-react';
+import { LogisticsCombatSimulator } from './LogisticsCombatSimulator';
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -215,6 +216,7 @@ export const LogisticsCalculator: React.FC = () => {
   const [distanceFromHub, setDistanceFromHub] = useState<number>(3); // provinces
   const [motorizationLevel, setMotorizationLevel] = useState<MotorizationLevel>('truck_1');
   const [airSupplyPlanes, setAirSupplyPlanes] = useState<number>(0); // C-47 / Ju 52 air transports
+  const [activeViewMode, setActiveViewMode] = useState<'calculator' | 'combat_sim' | 'all'>('calculator');
   const [activeGuidelineTab, setActiveGuidelineTab] = useState<string>('throughput');
   const [copiedSummary, setCopiedSummary] = useState<boolean>(false);
 

@@ -3,7 +3,7 @@ import {
   GitBranch, CheckCircle2, AlertTriangle, Clock, Shield, Factory,
   Award, Globe, Zap, Sparkles, Copy, Check, RotateCcw, Info,
   Search, Star, Lock, ArrowUpRight, Flame, Anchor, Plane, HelpCircle,
-  BarChart3, CheckSquare, Square, ChevronRight, X, Map
+  BarChart3, CheckSquare, Square, ChevronRight, X, Map, Users, Microscope, Fuel
 } from 'lucide-react';
 import { NationalFocus, FocusPresetPath } from '../types';
 import {
@@ -12,6 +12,8 @@ import {
   FOCUS_PRESETS_DATA
 } from '../data/focusData';
 import { EuropeInteractiveMap } from './EuropeInteractiveMap';
+import { CountryDashboard } from './CountryDashboard';
+import { MAJOR_NATIONS_STARTING_STATS } from '../data/countryStartingStats';
 
 interface FocusTreeViewerProps {
   searchQuery: string;
@@ -37,9 +39,14 @@ export const FocusTreeViewer: React.FC<FocusTreeViewerProps> = ({
   const [copiedSummary, setCopiedSummary] = useState<boolean>(false);
   const [localSearch, setLocalSearch] = useState<string>('');
   const [showEuropeMap, setShowEuropeMap] = useState<boolean>(true);
+  const [mainViewMode, setMainViewMode] = useState<'tree' | 'dashboard'>('tree');
   const treeSectionRef = useRef<HTMLDivElement>(null);
 
   const currentCountry = MAJOR_COUNTRIES_FOCUS.find(c => c.id === selectedCountryId) || MAJOR_COUNTRIES_FOCUS[0];
+
+  const currentCountryStats = useMemo(() => {
+    return MAJOR_NATIONS_STARTING_STATS.find(c => c.id === selectedCountryId) || MAJOR_NATIONS_STARTING_STATS[0];
+  }, [selectedCountryId]);
 
   // Country's focuses
   const countryFocuses = useMemo(() => {
@@ -279,7 +286,33 @@ ${activeFocusObjects.map((f, i) => `${i + 1}. ${f.name} (${f.days} hari)`).join(
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* View Mode Toggle: Tree vs Country Dashboard */}
+            <div className="flex items-center gap-1 bg-[#0c141d] p-1 rounded-lg border border-[#1e2e3f]">
+              <button
+                onClick={() => setMainViewMode('tree')}
+                className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 font-mono text-xs font-bold transition-all ${
+                  mainViewMode === 'tree'
+                    ? 'bg-[#f59e0b] text-[#0c141d] shadow-sm'
+                    : 'text-[#94a3b8] hover:text-[#f8fafc]'
+                }`}
+              >
+                <GitBranch className="h-3.5 w-3.5" />
+                <span>Pohon Fokus</span>
+              </button>
+              <button
+                onClick={() => setMainViewMode('dashboard')}
+                className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 font-mono text-xs font-bold transition-all ${
+                  mainViewMode === 'dashboard'
+                    ? 'bg-[#d97706] text-white shadow-sm'
+                    : 'text-[#94a3b8] hover:text-[#f8fafc]'
+                }`}
+              >
+                <BarChart3 className="h-3.5 w-3.5" />
+                <span>Dashboard Negara (1936)</span>
+              </button>
+            </div>
+
             <button
               onClick={() => setShowEuropeMap(!showEuropeMap)}
               className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-mono text-xs font-bold border transition-all ${
@@ -289,7 +322,7 @@ ${activeFocusObjects.map((f, i) => `${i + 1}. ${f.name} (${f.days} hari)`).join(
               }`}
             >
               <Globe className="h-4 w-4 text-[#f59e0b]" />
-              <span>{showEuropeMap ? 'Sembunyikan Peta Eropa' : 'Tampilkan Peta Interaktif Eropa'}</span>
+              <span>{showEuropeMap ? 'Sembunyikan Peta' : 'Peta Eropa'}</span>
             </button>
             <span className="rounded-full bg-[#1e2e40] px-2.5 py-1 font-mono text-xs font-semibold text-[#38bdf8] border border-[#38bdf8]/30">
               {MAJOR_COUNTRIES_FOCUS.length} Negara
@@ -329,10 +362,55 @@ ${activeFocusObjects.map((f, i) => `${i + 1}. ${f.name} (${f.days} hari)`).join(
             })}
           </div>
         </div>
+
+        {/* Country Starting Stats Quick Strip */}
+        <div className="mt-3 pt-3 border-t border-[#1e2a38] flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-xs">
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-1.5 text-[#f1f5f9]">
+              <span className="font-mono font-bold text-[#fbbf24] bg-amber-400/10 px-1.5 py-0.5 rounded border border-amber-400/20">
+                {currentCountryStats.tag}
+              </span>
+              <span className="font-bold">{currentCountryStats.name}</span>
+            </div>
+            <div className="flex items-center gap-3 text-[11px] text-[#94a3b8] flex-wrap">
+              <span className="flex items-center gap-1 text-[#a7f3d0]">
+                <Users className="h-3.5 w-3.5 text-[#10b981]" /> Manpower: <strong>{currentCountryStats.manpower.availablePoolDisplay}</strong> ({currentCountryStats.manpower.conscriptionPercent}%)
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1 text-[#7dd3fc]">
+                <Factory className="h-3.5 w-3.5 text-[#38bdf8]" /> Total Pabrik: <strong>{currentCountryStats.factories.total}</strong> ({currentCountryStats.factories.military} Mil / {currentCountryStats.factories.civilian} Civ / {currentCountryStats.factories.dockyards} Dock)
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1 text-[#e9d5ff]">
+                <Microscope className="h-3.5 w-3.5 text-[#c084fc]" /> Slot Riset: <strong>{currentCountryStats.researchSlots.starting}/{currentCountryStats.researchSlots.maxExpandable}</strong>
+              </span>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setMainViewMode(mainViewMode === 'dashboard' ? 'tree' : 'dashboard')}
+            className="flex items-center gap-1 text-[11px] font-bold text-[#f59e0b] hover:text-[#fbbf24] transition-colors self-start md:self-auto shrink-0"
+          >
+            <span>{mainViewMode === 'dashboard' ? 'Kembali ke Pohon Fokus' : 'Bandingkan Semua Negara Utama'}</span>
+            <ChevronRight className="h-3.5 w-3.5" />
+          </button>
+        </div>
       </div>
 
-      {/* Main Layout: Left Side (Focus Tree Selector) & Right Side (Interactive Trade-off Calculator HUD) */}
-      <div ref={treeSectionRef} className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      {/* Main Layout: Conditional Country Dashboard vs Focus Tree & Trade-off Calculator */}
+      {mainViewMode === 'dashboard' ? (
+        <CountryDashboard
+          selectedCountryId={selectedCountryId}
+          onSelectCountry={(id) => {
+            handleSelectCountry(id);
+          }}
+          onViewFocusTree={() => {
+            setMainViewMode('tree');
+            treeSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+          }}
+        />
+      ) : (
+        <div ref={treeSectionRef} className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Focus Catalog & Path Selector (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
           {/* Preset Buttons Bar */}
@@ -841,6 +919,7 @@ ${activeFocusObjects.map((f, i) => `${i + 1}. ${f.name} (${f.days} hari)`).join(
           </div>
         </div>
       </div>
+      )}
 
       {/* Focus Inspection Modal / Drawer */}
       {inspectingFocus && (
