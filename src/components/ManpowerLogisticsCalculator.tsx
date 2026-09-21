@@ -56,7 +56,7 @@ const DEFAULT_PRESETS: PresetScenario[] = [
         trucksPerDiv: 20,
         tanksPerDiv: 0,
         antiAirPerDiv: 20,
-        dailyFuelPerDiv: 1.2,
+        dailyFuelPerDiv: 85,
         dailySupplyPerDiv: 1.15
       },
       {
@@ -70,7 +70,7 @@ const DEFAULT_PRESETS: PresetScenario[] = [
         trucksPerDiv: 140,
         tanksPerDiv: 160,
         antiAirPerDiv: 30,
-        dailyFuelPerDiv: 28.5,
+        dailyFuelPerDiv: 2400,
         dailySupplyPerDiv: 2.45
       },
       {
@@ -84,7 +84,7 @@ const DEFAULT_PRESETS: PresetScenario[] = [
         trucksPerDiv: 220,
         tanksPerDiv: 0,
         antiAirPerDiv: 20,
-        dailyFuelPerDiv: 18.2,
+        dailyFuelPerDiv: 1250,
         dailySupplyPerDiv: 1.85
       }
     ],
@@ -116,7 +116,7 @@ const DEFAULT_PRESETS: PresetScenario[] = [
         trucksPerDiv: 10,
         tanksPerDiv: 0,
         antiAirPerDiv: 15,
-        dailyFuelPerDiv: 0.8,
+        dailyFuelPerDiv: 45,
         dailySupplyPerDiv: 0.95
       },
       {
@@ -130,7 +130,7 @@ const DEFAULT_PRESETS: PresetScenario[] = [
         trucksPerDiv: 100,
         tanksPerDiv: 140,
         antiAirPerDiv: 20,
-        dailyFuelPerDiv: 24.0,
+        dailyFuelPerDiv: 2100,
         dailySupplyPerDiv: 2.2
       }
     ],
@@ -162,7 +162,7 @@ const DEFAULT_PRESETS: PresetScenario[] = [
         trucksPerDiv: 85,
         tanksPerDiv: 0,
         antiAirPerDiv: 25,
-        dailyFuelPerDiv: 8.5,
+        dailyFuelPerDiv: 850,
         dailySupplyPerDiv: 1.4
       },
       {
@@ -176,7 +176,7 @@ const DEFAULT_PRESETS: PresetScenario[] = [
         trucksPerDiv: 160,
         tanksPerDiv: 180,
         antiAirPerDiv: 30,
-        dailyFuelPerDiv: 32.0,
+        dailyFuelPerDiv: 2650,
         dailySupplyPerDiv: 2.6
       }
     ],
@@ -208,7 +208,7 @@ const DEFAULT_PRESETS: PresetScenario[] = [
         trucksPerDiv: 5,
         tanksPerDiv: 0,
         antiAirPerDiv: 15,
-        dailyFuelPerDiv: 0.4,
+        dailyFuelPerDiv: 35,
         dailySupplyPerDiv: 0.85
       }
     ],

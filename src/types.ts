@@ -1,6 +1,6 @@
 export type GuideLevel = 'all' | 'pemula' | 'menengah' | 'ahli';
 
-export type MainTab = 'guides' | 'division' | 'focus_tree' | 'war_room' | 'commands' | 'favorites';
+export type MainTab = 'guides' | 'division' | 'focus_tree' | 'tech_tree' | 'battle_planner' | 'war_room' | 'commands' | 'favorites';
 
 export interface GuideSection {
   id: string;
@@ -116,7 +116,7 @@ export interface CountryStrategy {
 
 export interface FavoriteItem {
   id: string;
-  type: 'guide' | 'command' | 'division' | 'country' | 'focus';
+  type: 'guide' | 'command' | 'division' | 'country' | 'focus' | 'tech' | 'plan';
   title: string;
   subtitle: string;
   tag?: string;
@@ -199,4 +199,150 @@ export interface BattleSimEnvironment {
   attackerFlanks: number; // 1, 2, or 3
   weather: 'clear' | 'mud' | 'night' | 'snow';
 }
+
+// ==================== TECH TREE TYPES ====================
+export type TechBranch = 'infantry' | 'armor' | 'air' | 'naval' | 'industry' | 'engineering';
+
+export interface TechItem {
+  id: string;
+  name: string;
+  originalName?: string;
+  branch: TechBranch;
+  subCategory: string;
+  year: number;
+  baseDays: number;
+  iconType: string;
+  tier: number; // 1 to 5
+  prerequisites: string[]; // ids of required prior tech
+  leadsTo?: string[];
+  description: string;
+  historicalContext?: string;
+  bonuses: { label: string; value: string; positive?: boolean }[];
+  unlocksEquipment?: string[];
+  aheadOfTimePenaltyYear?: number;
+  mioSynergy?: string;
+}
+
+export type TechStatus = 'not_researched' | 'in_progress' | 'researched';
+
+export interface ResearchSlotAssignment {
+  slotIndex: number;
+  techId: string | null;
+  startedAtDay?: number;
+  progressPercent: number; // 0 - 100%
+  mioBonusPercent?: number;
+}
+
+export interface TechProgressState {
+  researchedTechIds: string[];
+  currentYear: number; // 1936 to 1945
+  researchSlots: ResearchSlotAssignment[];
+  customNotes?: Record<string, string>;
+}
+
+// ==================== BATTLE PLANNER TYPES ====================
+export type TacticalToolType =
+  | 'frontline'
+  | 'offensive_arrow'
+  | 'spearhead'
+  | 'fallback'
+  | 'encirclement'
+  | 'air_corridor'
+  | 'freehand'
+  | 'text_label';
+
+export interface TacticalPoint {
+  x: number;
+  y: number;
+}
+
+export interface TacticalElement {
+  id: string;
+  type: TacticalToolType;
+  color: string;
+  points: TacticalPoint[];
+  label?: string;
+  strokeWidth?: number;
+  style?: 'solid' | 'dashed' | 'pincer';
+}
+
+export interface TacticalDivisionMarker {
+  id: string;
+  x: number;
+  y: number;
+  name: string;
+  symbol: 'infantry' | 'armor' | 'motorized' | 'artillery' | 'paratrooper' | 'marine' | 'hq';
+  side: 'friendly' | 'hostile';
+  count: number;
+  org: number;
+}
+
+export interface BattlePlanPreset {
+  id: string;
+  name: string;
+  theater: string;
+  year: number;
+  historicalName: string;
+  description: string;
+  mapBackdrop: 'barbarossa' | 'western_front' | 'north_africa' | 'topographic_grid';
+  elements: TacticalElement[];
+  markers: TacticalDivisionMarker[];
+  tacticalNotes: string[];
+  estimatedBonus: number;
+  encirclementPotential: number;
+}
+
+// ==================== APP BACKUP & CONFIG EXPORT/IMPORT ====================
+export interface StrategicResourceBreakdown {
+  oil: number;
+  steel: number;
+  aluminium: number;
+  tungsten: number;
+  chromium: number;
+  rubber: number;
+}
+
+export interface EuropeMapCountry {
+  id: string; // matches countryId in MAJOR_COUNTRIES_FOCUS (e.g. 'ger', 'sov', 'fra', 'eng', 'ita', 'pol', 'rom', 'yug', 'hun', 'cze', 'tur', 'spa', 'fin', 'swe')
+  tag: string;
+  name: string;
+  nativeName: string;
+  capital: string;
+  faction: 'Axis' | 'Allies' | 'Comintern' | 'Neutral';
+  ideology: 'Fascism' | 'Democratic' | 'Communism' | 'Non-Aligned';
+  flagSymbol: string;
+  flagColors: [string, string];
+  pathD: string; // SVG path data
+  secondaryPathsD?: string[]; // islands or enclaves (e.g. East Prussia, Sicily, Corsica)
+  labelPos: { x: number; y: number };
+  capitalPos: { x: number; y: number };
+  resources: StrategicResourceBreakdown;
+  startingFactories: { civs: number; mils: number; docks: number };
+  keyFocusSummary: string;
+  majorFocusPaths: string[];
+  historicalEvents1936_1945: string[];
+  claimsOrExpansionVectors?: { toId: string; label: string; x1: number; y1: number; x2: number; y2: number }[];
+}
+
+export interface WarRoomBackupConfig {
+  appVersion: string;
+  exportDate: string;
+  exportTimestamp: number;
+  favorites: FavoriteItem[];
+  researchProgress?: {
+    researchedTechIds: string[];
+    currentYear: number;
+    slots: { slotIndex: number; techId: string | null; progressPercent: number }[];
+  };
+  customBattlePlans?: BattlePlanPreset[];
+  divisionBuilderState?: {
+    selectedBattalions: { battalionId: string; count: number }[];
+    selectedSupport: string[];
+  };
+  warRoomPreferences?: {
+    selectedCountryId?: string;
+    vintageThemePreferred?: boolean;
+  };
+}
+
 

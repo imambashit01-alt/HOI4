@@ -1,4 +1,17 @@
 import { NationalFocus, FocusPresetPath } from '../types';
+import {
+  MINOR_EUROPEAN_COUNTRIES_META,
+  MINOR_EUROPEAN_FOCUSES_DATA,
+  MINOR_EUROPEAN_PRESETS
+} from './minorEuropeanFocusesData';
+import {
+  EXPANDED_MAJOR_FOCUSES_DATA,
+  EXPANDED_MAJOR_PRESETS
+} from './expandedMajorFocusesData';
+import {
+  REGIONAL_POWERS_FOCUSES_DATA,
+  REGIONAL_POWERS_PRESETS
+} from './regionalPowersFocusesData';
 
 export const MAJOR_COUNTRIES_FOCUS = [
   { id: 'ger', tag: 'GER', name: 'Jerman (German Reich)', flagSymbol: '✠', flagColors: ['#1e293b', '#b91c1c'] },
@@ -21,9 +34,10 @@ export const MAJOR_COUNTRIES_FOCUS = [
   { id: 'spa', tag: 'SPA', name: 'Spanyol (Spain)', flagSymbol: '🐂', flagColors: ['#dc2626', '#eab308'] },
   { id: 'fin', tag: 'FIN', name: 'Republik Finlandia (Finland)', flagSymbol: '❄', flagColors: ['#1d4ed8', '#f8fafc'] },
   { id: 'man', tag: 'MAN', name: 'Kekaisaran Manchukuo', flagSymbol: '🐉', flagColors: ['#eab308', '#dc2626'] },
+  ...MINOR_EUROPEAN_COUNTRIES_META
 ];
 
-export const NATIONAL_FOCUSES_DATA: NationalFocus[] = [
+const BASE_NATIONAL_FOCUSES_DATA: NationalFocus[] = [
   // =========================================================================
   // 1. JERMAN (GERMAN REICH - GER)
   // =========================================================================
@@ -1598,7 +1612,14 @@ export const NATIONAL_FOCUSES_DATA: NationalFocus[] = [
   }
 ];
 
-export const FOCUS_PRESETS_DATA: FocusPresetPath[] = [
+export const NATIONAL_FOCUSES_DATA: NationalFocus[] = [
+  ...BASE_NATIONAL_FOCUSES_DATA,
+  ...EXPANDED_MAJOR_FOCUSES_DATA,
+  ...REGIONAL_POWERS_FOCUSES_DATA,
+  ...MINOR_EUROPEAN_FOCUSES_DATA
+];
+
+const BASE_FOCUS_PRESETS_DATA: FocusPresetPath[] = [
   // JERMAN PRESETS
   {
     id: 'preset-ger-meta',
@@ -1824,3 +1845,11 @@ export const FOCUS_PRESETS_DATA: FocusPresetPath[] = [
     ]
   }
 ];
+
+export const FOCUS_PRESETS_DATA: FocusPresetPath[] = [
+  ...BASE_FOCUS_PRESETS_DATA,
+  ...EXPANDED_MAJOR_PRESETS,
+  ...REGIONAL_POWERS_PRESETS,
+  ...MINOR_EUROPEAN_PRESETS
+];
+

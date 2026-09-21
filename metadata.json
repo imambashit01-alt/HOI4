@@ -1,6 +1,6 @@
 {
   "name": "Hearts of Iron IV Guide & Console",
-  "description": "Panduan taktis komprehensif Hearts of Iron IV bertema Perang Dunia II dari tingkat pemula, menengah, hingga ahli, dilengkapi kalkulator konsumsi manpower & logistik, meta template divisi, kalkulator batalion, strategi doktrin negara, dan daftar kode konsol cheat terlengkap bahasa Indonesia.",
+  "description": "Panduan taktis komprehensif Hearts of Iron IV bertema Perang Dunia II klasik: peta interaktif SVG Eropa 1936-1939 dengan persebaran sumber daya & navigasi pohon fokus, 100+ panduan strategi, pohon riset teknologi, battle planner canvas, kalkulator perang & logistik.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

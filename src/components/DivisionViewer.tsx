@@ -3,7 +3,7 @@ import {
   Shield, Plus, Trash2, Copy, Check, Star, RefreshCw,
   Zap, Info, Target, AlertCircle, Factory, Wrench,
   ChevronRight, BarChart3, BookOpen, Layers, Flame,
-  Award, Sliders, TrendingUp, Fuel, Boxes, ArrowLeftRight
+  Award, Sliders, TrendingUp, Fuel, Boxes, ArrowLeftRight, Swords
 } from 'lucide-react';
 import { DivisionPreset } from '../types';
 import {
@@ -15,6 +15,8 @@ import {
 } from '../data/divisionData';
 import { DivisionSplitCompare } from './DivisionSplitCompare';
 import { ArmyLogisticsCalculator } from './ArmyLogisticsCalculator';
+import { BattleResultEstimator } from './BattleResultEstimator';
+import { LogisticsCalculator } from './LogisticsCalculator';
 
 interface DivisionViewerProps {
   searchQuery: string;
@@ -27,7 +29,7 @@ export const DivisionViewer: React.FC<DivisionViewerProps> = ({
   isFavorite,
   toggleFavorite
 }) => {
-  const [activeSubTab, setActiveSubTab] = useState<'presets' | 'calculator' | 'split_compare' | 'army_logistics' | 'production' | 'production_guide'>('presets');
+  const [activeSubTab, setActiveSubTab] = useState<'presets' | 'calculator' | 'battle_estimator' | 'split_compare' | 'army_logistics' | 'nsb_logistics' | 'production' | 'production_guide'>('presets');
   const [selectedRole, setSelectedRole] = useState<string>('Semua');
   const [selectedWidthFilter, setSelectedWidthFilter] = useState<string>('Semua');
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -424,6 +426,19 @@ Tips Produksi: ${preset.productionTip || 'Prioritaskan alokasi pabrik senapan da
           </button>
 
           <button
+            id="tab-division-battle-estimator"
+            onClick={() => setActiveSubTab('battle_estimator')}
+            className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs sm:text-sm font-semibold transition-all whitespace-nowrap ${
+              activeSubTab === 'battle_estimator'
+                ? 'border border-[#ef4444]/60 bg-[#2d1212] text-[#fca5a5] shadow-md shadow-black/40'
+                : 'border border-[#1e2a36] bg-[#0f1721] text-[#94a3b8] hover:text-[#f8fafc]'
+            }`}
+          >
+            <Swords className="h-4 w-4 text-[#ef4444]" />
+            <span>Kalkulator Perang &amp; Tempur</span>
+          </button>
+
+          <button
             id="tab-division-split-compare"
             onClick={() => setActiveSubTab('split_compare')}
             className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs sm:text-sm font-semibold transition-all whitespace-nowrap ${
@@ -446,7 +461,20 @@ Tips Produksi: ${preset.productionTip || 'Prioritaskan alokasi pabrik senapan da
             }`}
           >
             <Boxes className="h-4 w-4 text-[#f59e0b]" />
-            <span>Logistik &amp; Konsumsi Tentara</span>
+            <span>Logistik Makro Tentara</span>
+          </button>
+
+          <button
+            id="tab-division-nsb-logistics"
+            onClick={() => setActiveSubTab('nsb_logistics')}
+            className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs sm:text-sm font-semibold transition-all whitespace-nowrap ${
+              activeSubTab === 'nsb_logistics'
+                ? 'border border-[#38bdf8]/60 bg-[#0c2438] text-[#7dd3fc] shadow-md shadow-black/40'
+                : 'border border-[#1e2a36] bg-[#0f1721] text-[#94a3b8] hover:text-[#f8fafc]'
+            }`}
+          >
+            <Fuel className="h-4 w-4 text-[#38bdf8]" />
+            <span>Kalkulator Bahan Bakar &amp; Hub (NSB)</span>
           </button>
 
           <button
@@ -1524,6 +1552,16 @@ ${productionAnalysis.fullArmyEquipment.map(e => `- ${e.name}: ${e.recommendedMil
       {/* VIEW 6: ARMY LOGISTICS & CONSUMPTION CALCULATOR */}
       {activeSubTab === 'army_logistics' && (
         <ArmyLogisticsCalculator />
+      )}
+
+      {/* VIEW 6B: NSB LOGISTICS, SPEED & FUEL THROUGHPUT CALCULATOR */}
+      {activeSubTab === 'nsb_logistics' && (
+        <LogisticsCalculator />
+      )}
+
+      {/* VIEW 7: WAR & BATTLE SIMULATOR ESTIMATOR */}
+      {activeSubTab === 'battle_estimator' && (
+        <BattleResultEstimator />
       )}
     </div>
   );

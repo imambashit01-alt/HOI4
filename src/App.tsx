@@ -6,9 +6,11 @@ import { FocusTreeViewer } from './components/FocusTreeViewer';
 import { WarRoomViewer } from './components/WarRoomViewer';
 import { ConsoleViewer } from './components/ConsoleViewer';
 import { FavoritesViewer } from './components/FavoritesViewer';
+import { TechTreeViewer } from './components/TechTreeViewer';
+import { BattlePlanner } from './components/BattlePlanner';
 import { GUIDES_DATA } from './data/guidesData';
 import { MainTab, GuideLevel, FavoriteItem } from './types';
-import { ArrowUp, Radio, Shield, Globe, Terminal, BookOpen, GitBranch } from 'lucide-react';
+import { ArrowUp, Radio, Shield, Globe, Terminal, BookOpen, GitBranch, Swords, Cpu, Compass } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<MainTab>('guides');
@@ -16,6 +18,25 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
   const [focusCountryId, setFocusCountryId] = useState<string>('ger');
+
+  // Vintage Old Classic Theme state
+  const [vintageTheme, setVintageTheme] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem('hoi4_vintage_theme');
+      if (saved !== null) return JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+    return true; // Default to classic WW2 aesthetic
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('hoi4_vintage_theme', JSON.stringify(vintageTheme));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [vintageTheme]);
 
   // Favorites state persisted to localStorage
   const [favorites, setFavorites] = useState<FavoriteItem[]>(() => {
@@ -107,7 +128,11 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0f14] text-[#d8e2ea] flex flex-col font-sans selection:bg-[#d97706] selection:text-[#0a0f14]">
+    <div className={`min-h-screen flex flex-col transition-colors selection:bg-[#d97706] selection:text-[#0a0f14] ${
+      vintageTheme
+        ? 'bg-[#0b100d] text-[#e2e8f0] font-serif'
+        : 'bg-[#0a0f14] text-[#d8e2ea] font-sans'
+    }`}>
       {/* War Room Header */}
       <Header
         activeTab={activeTab}
@@ -117,6 +142,8 @@ export default function App() {
         guideLevel={guideLevel}
         setGuideLevel={setGuideLevel}
         favoriteCount={favorites.length}
+        vintageTheme={vintageTheme}
+        setVintageTheme={setVintageTheme}
       />
 
       {/* Main Command & Tactical Screen */}
@@ -133,6 +160,18 @@ export default function App() {
               setActiveTab(tab);
               if (query !== undefined) setSearchQuery(query);
             }}
+          />
+        )}
+
+        {activeTab === 'battle_planner' && (
+          <BattlePlanner />
+        )}
+
+        {activeTab === 'tech_tree' && (
+          <TechTreeViewer
+            searchQuery={searchQuery}
+            isFavorite={isFavorite}
+            toggleFavorite={toggleFavorite}
           />
         )}
 
@@ -179,6 +218,7 @@ export default function App() {
             onRemoveFavorite={removeFavorite}
             onClearAll={clearAllFavorites}
             onNavigateTab={(tab) => setActiveTab(tab)}
+            onImportFavorites={(imported) => setFavorites(imported)}
           />
         )}
       </main>

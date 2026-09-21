@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   Globe, Flag, Factory, Award, CheckCircle2, AlertTriangle,
-  Lightbulb, Star, Copy, Check, Shield, Flame, BookOpen, Layers, GitBranch, Swords, Truck, TrendingUp
+  Lightbulb, Star, Copy, Check, Shield, Flame, BookOpen, Layers, GitBranch, Swords, Truck, TrendingUp, Map, Fuel
 } from 'lucide-react';
 import { CountryStrategy } from '../types';
 import { COUNTRIES_STRATEGY_DATA } from '../data/countryData';
@@ -9,6 +9,8 @@ import { BattlePlannerSimulator } from './BattlePlannerSimulator';
 import { DoctrineGraphicsViewer } from './DoctrineGraphicsViewer';
 import { ManpowerLogisticsCalculator } from './ManpowerLogisticsCalculator';
 import { BattleResultEstimator } from './BattleResultEstimator';
+import { EuropeInteractiveMap } from './EuropeInteractiveMap';
+import { LogisticsCalculator } from './LogisticsCalculator';
 
 interface WarRoomViewerProps {
   searchQuery: string;
@@ -25,7 +27,7 @@ export const WarRoomViewer: React.FC<WarRoomViewerProps> = ({
 }) => {
   const [selectedCountryId, setSelectedCountryId] = useState<string>('ger');
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'countries' | 'doctrines' | 'battle_planner' | 'battle_estimator' | 'manpower_logistics'>('countries');
+  const [activeTab, setActiveTab] = useState<'europe_map' | 'countries' | 'doctrines' | 'battle_planner' | 'battle_estimator' | 'logistics_calculator' | 'manpower_logistics'>('europe_map');
 
   const selectedCountry = COUNTRIES_STRATEGY_DATA.find(c => c.id === selectedCountryId) || COUNTRIES_STRATEGY_DATA[0];
 
@@ -62,8 +64,24 @@ Tips Komandan: ${c.proTips}`;
   return (
     <div className="space-y-6">
       {/* Tab Switcher */}
-      <div className="flex items-center justify-between gap-3 border-b border-[#22303c] pb-3.5">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between gap-3 border-b border-[#22303c] pb-3.5 overflow-x-auto">
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            id="tab-europe-map"
+            onClick={() => setActiveTab('europe_map')}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
+              activeTab === 'europe_map'
+                ? 'border border-[#f59e0b]/60 bg-[#261f14] text-[#fef3c7] shadow-md shadow-black/40'
+                : 'border border-[#1e2a36] bg-[#0f1721] text-[#94a3b8] hover:text-[#f8fafc]'
+            }`}
+          >
+            <Map className="h-4 w-4 text-[#f59e0b]" />
+            <span>Peta Interaktif Eropa</span>
+            <span className="rounded bg-[#f59e0b]/20 px-1.5 py-0.5 text-[10px] font-mono text-[#fde047]">
+              SVG &amp; Sumber Daya
+            </span>
+          </button>
+
           <button
             onClick={() => setActiveTab('countries')}
             className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
@@ -122,19 +140,50 @@ Tips Komandan: ${c.proTips}`;
           </button>
 
           <button
-            id="tab-manpower-logistics"
-            onClick={() => setActiveTab('manpower_logistics')}
+            id="tab-logistics-calculator"
+            onClick={() => setActiveTab('logistics_calculator')}
             className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
-              activeTab === 'manpower_logistics'
+              activeTab === 'logistics_calculator'
                 ? 'border border-[#38bdf8]/60 bg-[#0c2438] text-[#7dd3fc] shadow-md shadow-black/40'
                 : 'border border-[#1e2a36] bg-[#0f1721] text-[#94a3b8] hover:text-[#f8fafc]'
             }`}
           >
-            <Truck className="h-4 w-4 text-[#38bdf8]" />
-            <span>Konsumsi Manpower &amp; Logistik</span>
+            <Fuel className="h-4 w-4 text-[#38bdf8]" />
+            <span>Kalkulator Logistik &amp; BBM</span>
+            <span className="rounded bg-[#38bdf8]/20 px-1.5 py-0.2 text-[10px] font-mono text-[#38bdf8]">
+              NSB &amp; Guidelines
+            </span>
+          </button>
+
+          <button
+            id="tab-manpower-logistics"
+            onClick={() => setActiveTab('manpower_logistics')}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
+              activeTab === 'manpower_logistics'
+                ? 'border border-[#10b981]/60 bg-[#122820] text-[#a7f3d0] shadow-md shadow-black/40'
+                : 'border border-[#1e2a36] bg-[#0f1721] text-[#94a3b8] hover:text-[#f8fafc]'
+            }`}
+          >
+            <Truck className="h-4 w-4 text-[#10b981]" />
+            <span>Konsumsi Manpower &amp; Mils</span>
           </button>
         </div>
       </div>
+
+      {/* VIEW 0: EUROPE INTERACTIVE MAP */}
+      {activeTab === 'europe_map' && (
+        <div className="space-y-4">
+          <EuropeInteractiveMap
+            selectedCountryId={selectedCountryId}
+            onSelectCountry={(cId) => setSelectedCountryId(cId)}
+            onScrollToTree={() => {
+              if (onNavigateToFocus) {
+                onNavigateToFocus(selectedCountryId);
+              }
+            }}
+          />
+        </div>
+      )}
 
       {/* VIEW 1: COUNTRY STRATEGIES */}
       {activeTab === 'countries' && (
@@ -393,7 +442,12 @@ Tips Komandan: ${c.proTips}`;
         <BattleResultEstimator />
       )}
 
-      {/* VIEW 5: MANPOWER & LOGISTICS CONSUMPTION ENGINE */}
+      {/* VIEW 5: LOGISTICS, SPEED & FUEL THROUGHPUT CALCULATOR */}
+      {activeTab === 'logistics_calculator' && (
+        <LogisticsCalculator />
+      )}
+
+      {/* VIEW 6: MANPOWER & LOGISTICS CONSUMPTION ENGINE */}
       {activeTab === 'manpower_logistics' && (
         <ManpowerLogisticsCalculator />
       )}

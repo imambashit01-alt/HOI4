@@ -1,9 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
   GitBranch, CheckCircle2, AlertTriangle, Clock, Shield, Factory,
   Award, Globe, Zap, Sparkles, Copy, Check, RotateCcw, Info,
   Search, Star, Lock, ArrowUpRight, Flame, Anchor, Plane, HelpCircle,
-  BarChart3, CheckSquare, Square, ChevronRight, X
+  BarChart3, CheckSquare, Square, ChevronRight, X, Map
 } from 'lucide-react';
 import { NationalFocus, FocusPresetPath } from '../types';
 import {
@@ -11,6 +11,7 @@ import {
   NATIONAL_FOCUSES_DATA,
   FOCUS_PRESETS_DATA
 } from '../data/focusData';
+import { EuropeInteractiveMap } from './EuropeInteractiveMap';
 
 interface FocusTreeViewerProps {
   searchQuery: string;
@@ -35,6 +36,8 @@ export const FocusTreeViewer: React.FC<FocusTreeViewerProps> = ({
   const [inspectingFocus, setInspectingFocus] = useState<NationalFocus | null>(null);
   const [copiedSummary, setCopiedSummary] = useState<boolean>(false);
   const [localSearch, setLocalSearch] = useState<string>('');
+  const [showEuropeMap, setShowEuropeMap] = useState<boolean>(true);
+  const treeSectionRef = useRef<HTMLDivElement>(null);
 
   const currentCountry = MAJOR_COUNTRIES_FOCUS.find(c => c.id === selectedCountryId) || MAJOR_COUNTRIES_FOCUS[0];
 
@@ -250,6 +253,17 @@ ${activeFocusObjects.map((f, i) => `${i + 1}. ${f.name} (${f.days} hari)`).join(
 
   return (
     <div className="space-y-6">
+      {/* Interactive Map of Europe 1936-1939 */}
+      {showEuropeMap && (
+        <div className="animate-fadeIn">
+          <EuropeInteractiveMap
+            selectedCountryId={selectedCountryId}
+            onSelectCountry={handleSelectCountry}
+            onScrollToTree={() => treeSectionRef.current?.scrollIntoView({ behavior: 'smooth' })}
+          />
+        </div>
+      )}
+
       {/* Country Selector Header Tabs */}
       <div className="rounded-xl border border-[#223344] bg-[#111923] p-4 shadow-xl shadow-black/40">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
@@ -266,46 +280,59 @@ ${activeFocusObjects.map((f, i) => `${i + 1}. ${f.name} (${f.days} hari)`).join(
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowEuropeMap(!showEuropeMap)}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-mono text-xs font-bold border transition-all ${
+                showEuropeMap
+                  ? 'border-[#f59e0b] bg-[#292212] text-[#fef3c7] shadow-sm'
+                  : 'border-[#2a3c4f] bg-[#0c141d] text-[#94a3b8] hover:text-[#f8fafc]'
+              }`}
+            >
+              <Globe className="h-4 w-4 text-[#f59e0b]" />
+              <span>{showEuropeMap ? 'Sembunyikan Peta Eropa' : 'Tampilkan Peta Interaktif Eropa'}</span>
+            </button>
             <span className="rounded-full bg-[#1e2e40] px-2.5 py-1 font-mono text-xs font-semibold text-[#38bdf8] border border-[#38bdf8]/30">
-              8 Negara Utama
+              {MAJOR_COUNTRIES_FOCUS.length} Negara
             </span>
           </div>
         </div>
 
-        {/* Countries Grid Buttons */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
-          {MAJOR_COUNTRIES_FOCUS.map(country => {
-            const isSelected = country.id === selectedCountryId;
-            return (
-              <button
-                key={country.id}
-                onClick={() => handleSelectCountry(country.id)}
-                className={`flex flex-col items-center justify-center rounded-lg border p-2.5 transition-all text-center ${
-                  isSelected
-                    ? 'border-[#f59e0b] bg-gradient-to-b from-[#2a2215] to-[#151c24] text-[#fef3c7] shadow-md shadow-black/50 ring-1 ring-[#f59e0b]/60'
-                    : 'border-[#1e2938] bg-[#0c141d] text-[#94a3b8] hover:border-[#33475b] hover:text-[#f8fafc]'
-                }`}
-              >
-                <div
-                  className="flex h-8 w-8 items-center justify-center rounded-md font-serif text-sm font-bold text-white shadow-inner mb-1.5"
-                  style={{
-                    background: `linear-gradient(135deg, ${country.flagColors[0]}, ${country.flagColors[1]})`
-                  }}
+        {/* Countries Grid Buttons with Smooth Scroll */}
+        <div className="max-h-48 overflow-y-auto pr-1">
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-10 gap-2">
+            {MAJOR_COUNTRIES_FOCUS.map(country => {
+              const isSelected = country.id === selectedCountryId;
+              return (
+                <button
+                  key={country.id}
+                  onClick={() => handleSelectCountry(country.id)}
+                  className={`flex flex-col items-center justify-center rounded-lg border p-2 transition-all text-center ${
+                    isSelected
+                      ? 'border-[#f59e0b] bg-gradient-to-b from-[#2a2215] to-[#151c24] text-[#fef3c7] shadow-md shadow-black/50 ring-1 ring-[#f59e0b]/60'
+                      : 'border-[#1e2938] bg-[#0c141d] text-[#94a3b8] hover:border-[#33475b] hover:text-[#f8fafc]'
+                  }`}
                 >
-                  {country.flagSymbol}
-                </div>
-                <span className="font-mono text-xs font-bold text-[#f8fafc]">{country.tag}</span>
-                <span className="text-[11px] text-[#94a3b8] truncate max-w-full font-medium">
-                  {country.name.split(' ')[0]}
-                </span>
-              </button>
-            );
-          })}
+                  <div
+                    className="flex h-7 w-7 items-center justify-center rounded-md font-serif text-sm font-bold text-white shadow-inner mb-1"
+                    style={{
+                      background: `linear-gradient(135deg, ${country.flagColors[0]}, ${country.flagColors[1]})`
+                    }}
+                  >
+                    {country.flagSymbol}
+                  </div>
+                  <span className="font-mono text-xs font-bold text-[#f8fafc]">{country.tag}</span>
+                  <span className="text-[10px] text-[#94a3b8] truncate max-w-full font-medium">
+                    {country.name.split(' ')[0]}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
       {/* Main Layout: Left Side (Focus Tree Selector) & Right Side (Interactive Trade-off Calculator HUD) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div ref={treeSectionRef} className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Focus Catalog & Path Selector (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
           {/* Preset Buttons Bar */}

@@ -131,14 +131,60 @@ export const ArmyLogisticsCalculator: React.FC = () => {
       const divSupply = parseFloat(preset.stats.supplyUse) || 0.8;
       totalDailySupply += divSupply * divCount;
 
-      // Fuel consumption estimate
+      // Dynamic battalion-level fuel consumption and speed factor
+      let divBaseSpeed = 12.0;
+      let divFuelDaily = 0;
+
+      preset.battalions.forEach(b => {
+        const bName = b.name.toLowerCase();
+        let bSpeed = 4.0;
+        let bFuel = 4; // auxiliary fuel
+
+        if (bName.includes('tank') || b.iconType === 'armor') {
+          if (bName.includes('light')) {
+            bSpeed = 12.0;
+            bFuel = 190;
+          } else if (bName.includes('heavy') || bName.includes('super')) {
+            bSpeed = 5.5;
+            bFuel = 420;
+          } else { // Medium tank
+            bSpeed = 9.0;
+            bFuel = 275;
+          }
+        } else if (bName.includes('motorized') || b.iconType === 'motorized') {
+          bSpeed = 12.0;
+          bFuel = 125;
+        } else if (bName.includes('mechanized')) {
+          bSpeed = 8.5;
+          bFuel = 145;
+        } else if (bName.includes('cavalry')) {
+          bSpeed = 6.4;
+          bFuel = 5;
+        } else {
+          bSpeed = 4.0;
+          bFuel = 4;
+        }
+
+        divBaseSpeed = Math.min(divBaseSpeed, bSpeed);
+        divFuelDaily += bFuel * (b.count || 1);
+      });
+
+      // Support company fuel draw
+      preset.supportCompanies.forEach(sup => {
+        const sLower = sup.toLowerCase();
+        if (sLower.includes('flame tank')) divFuelDaily += 85;
+        else if (sLower.includes('recon') && (sLower.includes('motor') || sLower.includes('armored'))) divFuelDaily += 55;
+        else if (sLower.includes('logistics') || sLower.includes('signal') || sLower.includes('maintenance')) divFuelDaily += 18;
+        else divFuelDaily += 5;
+      });
+
+      // Division speed dynamic burn factor: faster units cover more km/day
+      const speedFactor = Math.max(0.7, divBaseSpeed / 6.0);
+      divFuelDaily = Math.round(divFuelDaily * speedFactor);
+      totalBaseFuelConsumption += divFuelDaily * divCount;
+
       const hasTanks = preset.battalions.some(b => b.name.toLowerCase().includes('tank') || b.iconType === 'armor');
       const hasMotorized = preset.battalions.some(b => b.name.toLowerCase().includes('motor') || b.iconType === 'motorized');
-      if (hasTanks) {
-        totalBaseFuelConsumption += 2800 * divCount; // 2800L fuel/day per tank division
-      } else if (hasMotorized) {
-        totalBaseFuelConsumption += 1200 * divCount; // 1200L fuel/day per motorized division
-      }
 
       // Equipment distribution
       if (hasTanks) {

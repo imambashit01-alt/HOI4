@@ -1,6 +1,9 @@
 import { GuideSection } from '../types';
+import { EXTRA_GUIDES_DATA } from './extraGuidesData';
+import { MORE_ADVANCED_GUIDES_DATA } from './moreAdvancedGuidesData';
+import { TACTICAL_EXPANDED_GUIDES_DATA } from './tacticalExpandedGuidesData';
 
-export const GUIDES_DATA: GuideSection[] = [
+const BASE_GUIDES_DATA: GuideSection[] = [
   // ==================== PEMULA (RECRUIT) ====================
   {
     id: 'g-pemula-1',
@@ -1831,6 +1834,13 @@ export const GUIDES_DATA: GuideSection[] = [
       'Pastikan rute laut ke negara penjual aman dari sergapan kapal selam agar kargo pengiriman senjata tidak karam di samudra.'
     ]
   }
+];
+
+export const GUIDES_DATA: GuideSection[] = [
+  ...BASE_GUIDES_DATA,
+  ...EXTRA_GUIDES_DATA,
+  ...MORE_ADVANCED_GUIDES_DATA,
+  ...TACTICAL_EXPANDED_GUIDES_DATA
 ];
 
 
