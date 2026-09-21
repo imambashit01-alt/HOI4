@@ -1,6 +1,6 @@
 export type GuideLevel = 'all' | 'pemula' | 'menengah' | 'ahli';
 
-export type MainTab = 'guides' | 'division' | 'war_room' | 'commands' | 'favorites';
+export type MainTab = 'guides' | 'division' | 'focus_tree' | 'war_room' | 'commands' | 'favorites';
 
 export interface GuideSection {
   id: string;
@@ -19,6 +19,10 @@ export interface GuideSection {
     steps?: string[];
   }[];
   summaryTips: string[];
+  readTimeMinutes?: number;
+  relatedCommand?: string;
+  relatedDivisionSearch?: string;
+  recommendedForTag?: string;
 }
 
 export interface CommandItem {
@@ -49,6 +53,18 @@ export interface SupportCompany {
   cost: string;
 }
 
+export interface EquipmentRequirement {
+  id: string;
+  name: string;
+  category: 'infantry_eq' | 'artillery_eq' | 'anti_air_eq' | 'anti_tank_eq' | 'support_eq' | 'motorized_eq' | 'mechanized_eq' | 'tank_eq';
+  countPerDivision: number;
+  baseIC: number;
+  steelCost: number;
+  tungstenCost: number;
+  rubberCost: number;
+  oilCost: number;
+}
+
 export interface DivisionPreset {
   id: string;
   name: string;
@@ -72,6 +88,9 @@ export interface DivisionPreset {
   weaknesses: string[];
   tacticalUsage: string;
   recommendedFor: string[];
+  equipmentSummary?: { name: string; count: number; icTotal: number }[];
+  terrainFit?: { terrain: string; score: 'Optimal' | 'Bagus' | 'Penalti'; note: string }[];
+  productionTip?: string;
 }
 
 export interface CountryStrategy {
@@ -97,9 +116,87 @@ export interface CountryStrategy {
 
 export interface FavoriteItem {
   id: string;
-  type: 'guide' | 'command' | 'division' | 'country';
+  type: 'guide' | 'command' | 'division' | 'country' | 'focus';
   title: string;
   subtitle: string;
   tag?: string;
   addedAt: number;
 }
+
+export interface NationalFocus {
+  id: string;
+  countryId: string;
+  name: string;
+  originalName?: string;
+  iconType: 'politics' | 'industry' | 'military' | 'navy' | 'air' | 'expansion' | 'research';
+  branch: string;
+  days: number;
+  prerequisites: string[];
+  mutuallyExclusive: string[];
+  historical: boolean;
+  statsDelta: {
+    politicalPower?: number;
+    civFactories?: number;
+    milFactories?: number;
+    dockyards?: number;
+    stability?: number;
+    warSupport?: number;
+    worldTension?: number;
+    researchSlots?: number;
+    armyXP?: number;
+    navyXP?: number;
+    airXP?: number;
+    manpowerBonus?: string;
+  };
+  pros: string[];
+  cons: string[];
+  keyEffectsSummary: string;
+  recommendedTiming: string;
+  historicalContext?: string;
+  annexationOrClaim?: string;
+}
+
+export interface FocusPresetPath {
+  id: string;
+  countryId: string;
+  title: string;
+  description: string;
+  type: 'meta_historical' | 'rush_industry' | 'alternative_history';
+  focusIds: string[];
+}
+
+export interface ArmyCompositionItem {
+  id: string;
+  templateId: string;
+  customName?: string;
+  count: number;
+}
+
+export interface BattleSimParticipant {
+  name: string;
+  templateId: string;
+  divisionCount: number;
+  softAttack: number;
+  hardAttack: number;
+  defense: number;
+  breakthrough: number;
+  organization: number;
+  armor: number;
+  piercing: number;
+  combatWidth: number;
+  hp: number;
+  hardness: number; // in percentage 0 - 100
+}
+
+export interface BattleSimEnvironment {
+  terrain: 'plains' | 'forest' | 'hills' | 'mountain' | 'urban' | 'marsh' | 'desert';
+  riverCrossing: 'none' | 'small' | 'large';
+  fortLevel: number; // 0 to 10
+  entrenchment: number; // 0 to 25
+  airSuperiority: 'none' | 'attacker' | 'defender';
+  casGroundDamage: number; // 0 to 100
+  attackerPlanningBonus: number; // 0 to 60%
+  attackerFlanks: number; // 1, 2, or 3
+  weather: 'clear' | 'mud' | 'night' | 'snow';
+}
+

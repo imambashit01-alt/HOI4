@@ -215,5 +215,36 @@ export const COUNTRIES_STRATEGY_DATA: CountryStrategy[] = [
       'Debuff "Victors of the Great War" yang memperlambat perolehan doktrin militer darat hingga 75%'
     ],
     proTips: 'Beli lisensi senjata dari Inggris atau bangun aliansi Little Entente (bersama Cekoslowakia, Yugoslavia, Rumania) untuk menjepit Jerman dari dua sisi sejak 1938!'
+  },
+  {
+    id: 'chi',
+    tag: 'CHI',
+    name: 'Tiongkok Nasionalis (Republic of China)',
+    faction: 'Chinese United Front',
+    difficulty: 'Menantang',
+    flagColors: ['#1d4ed8', '#ffffff'],
+    flagSymbol: '☀',
+    ideology: 'Non-Aligned',
+    leader: 'Chiang Kai-shek',
+    startingCivilianFactories: 16,
+    startingMilitaryFactories: 10,
+    startingDockyards: 1,
+    doctrineRecommendation: 'Mass Assault (Mass Mobilization) untuk manpower tak terbatas & recovery cepat',
+    focusPath1936: [
+      'Three Principles of the People (Tiga Prinsip Rakyat)',
+      'National Defense Council',
+      'United Front (Front Bersatu Anti-Jepang)',
+      'Army Reform (Hapus debuff korupsi tentara)',
+      'Relocate Capital to Chongqing (Evakuasi Industri)',
+      'Prioritize Defense of Shanghai & Wuhan'
+    ],
+    industryStrategy: 'Industri Tiongkok di awal sangat tertinggal. Begitu Jepang menyerbu, pindahkan ibu kota dan fasilitas industri ke pedalaman berpegunungan di Chongqing. Bangun pabrik senapan dasar di pedalaman yang sulit dijangkau pembom Jepang.',
+    militaryStrategy: 'Kekuatan terbesar Tiongkok adalah Manpower raksasa. Jangan bertempur di dataran terbuka melawan artileri dan tank Jepang. Buat garis benteng di sepanjang Sungai Kuning (Yellow River) dan manfaatkan medan pegunungan. Atrisi tentara Jepang hingga logistik mereka hancur.',
+    keyChallenges: [
+      'Debuff "Incompetent Officers" dan korupsi tentara yang memotong daya tempur infanteri',
+      'Ketiadaan armada laut dan angkatan udara modern untuk menandingi Zero Jepang',
+      'Ancaman pengkhianatan dari Warlords lokal dan Partai Komunis Tiongkok (CPC)'
+    ],
+    proTips: 'Gunakan keputusan "Blow Yellow River Dikes" untuk membanjiri dataran dan menenggelamkan logistik Jepang jika mereka berhasil menembus garis pertahanan utara!'
   }
 ];

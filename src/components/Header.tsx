@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, BookOpen, Shield, Globe, Terminal, Star, Radio, Activity } from 'lucide-react';
+import { Search, BookOpen, Shield, Globe, Terminal, Star, Radio, Activity, GitBranch } from 'lucide-react';
 import { MainTab, GuideLevel } from '../types';
 
 interface HeaderProps {
@@ -30,12 +30,20 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Top bar with title and war room badge */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-[#374959] bg-[#1a2530] shadow-md shadow-black/60 text-[#f59e0b]">
-              <Radio className="h-6 w-6 animate-pulse text-[#d97706]" />
+            <div className="relative group shrink-0">
+              <img
+                src="https://thumb.wikimedia.org/wikipedia/en/thumb/b/b3/Hearts_of_Iron_IV_packshot.jpg/250px-Hearts_of_Iron_IV_packshot.jpg?utm_source=en.wikipedia.org&utm_campaign=parser&utm_content=thumbnail"
+                alt="Hearts of Iron IV"
+                referrerPolicy="no-referrer"
+                className="h-14 w-11 md:h-16 md:w-12 rounded-md object-cover border-2 border-[#d97706]/70 shadow-lg shadow-black/80 ring-1 ring-[#b45309]/30 transition-transform group-hover:scale-105"
+              />
+              <div className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#10b981] ring-2 ring-[#0f151b]" title="Server Online">
+                <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+              </div>
             </div>
             <div>
               <div className="flex items-center gap-2.5 flex-wrap">
-                <h1 className="font-serif text-2xl md:text-3xl font-black tracking-tight text-[#f1f5f9] uppercase drop-shadow">
+                <h1 className="font-serif text-2xl md:text-3xl font-black tracking-tight text-[#f1f5f9] uppercase drop-shadow flex items-center gap-2">
                   Hearts of Iron IV
                 </h1>
                 <span className="rounded border border-[#b45309]/50 bg-[#78350f]/30 px-2 py-0.5 text-[11px] font-mono tracking-wide text-[#fbbf24] font-semibold">
@@ -98,7 +106,22 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <Shield className="h-4 w-4 text-[#3b82f6]" />
-              <span>Meta Divisi &amp; Kalkulator</span>
+              <span>Kalkulator Divisi &amp; Produksi</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('focus_tree')}
+              className={`flex items-center gap-2 rounded-md px-3.5 py-2 text-sm font-medium transition-all ${
+                activeTab === 'focus_tree'
+                  ? 'border border-[#f59e0b]/50 bg-[#2b2112] text-[#fef3c7] shadow-sm'
+                  : 'text-[#94a3b8] hover:bg-[#16202a] hover:text-[#e2e8f0]'
+              }`}
+            >
+              <GitBranch className="h-4 w-4 text-[#f59e0b]" />
+              <span>Kalkulator Fokus Nasional</span>
+              <span className="rounded bg-[#f59e0b]/20 px-1.5 py-0.2 text-[10px] font-bold text-[#fbbf24]">
+                Baru
+              </span>
             </button>
 
             <button

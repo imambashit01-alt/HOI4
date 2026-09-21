@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Star, Trash2, Copy, Check, BookOpen, Terminal, Shield, Globe } from 'lucide-react';
+import { Star, Trash2, Copy, Check, BookOpen, Terminal, Shield, Globe, GitBranch } from 'lucide-react';
 import { FavoriteItem, MainTab } from '../types';
 
 interface FavoritesViewerProps {
@@ -39,6 +39,8 @@ export const FavoritesViewer: React.FC<FavoritesViewerProps> = ({
         return <Shield className="h-4 w-4 text-[#3b82f6]" />;
       case 'country':
         return <Globe className="h-4 w-4 text-[#10b981]" />;
+      case 'focus':
+        return <GitBranch className="h-4 w-4 text-[#ec4899]" />;
     }
   };
 
@@ -52,6 +54,8 @@ export const FavoritesViewer: React.FC<FavoritesViewerProps> = ({
         return 'Template Divisi';
       case 'country':
         return 'Strategi Negara';
+      case 'focus':
+        return 'Fokus Nasional';
     }
   };
 
@@ -132,6 +136,16 @@ export const FavoritesViewer: React.FC<FavoritesViewerProps> = ({
             }`}
           >
             Strategi Negara ({favorites.filter(f => f.type === 'country').length})
+          </button>
+          <button
+            onClick={() => setFilterType('focus')}
+            className={`rounded-lg px-3 py-1.5 font-medium transition-colors ${
+              filterType === 'focus'
+                ? 'bg-[#1e293b] text-[#f8fafc] font-semibold'
+                : 'text-[#94a3b8] hover:text-[#f8fafc]'
+            }`}
+          >
+            Fokus Nasional ({favorites.filter(f => f.type === 'focus').length})
           </button>
         </div>
       )}
@@ -225,6 +239,7 @@ export const FavoritesViewer: React.FC<FavoritesViewerProps> = ({
                         else if (fav.type === 'command') onNavigateTab('commands');
                         else if (fav.type === 'division') onNavigateTab('division');
                         else if (fav.type === 'country') onNavigateTab('war_room');
+                        else if (fav.type === 'focus') onNavigateTab('focus_tree');
                       }}
                       className="text-[11px] text-[#94a3b8] hover:text-[#f8fafc] underline underline-offset-2"
                     >

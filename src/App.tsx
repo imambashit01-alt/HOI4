@@ -2,18 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { GuideViewer } from './components/GuideViewer';
 import { DivisionViewer } from './components/DivisionViewer';
+import { FocusTreeViewer } from './components/FocusTreeViewer';
 import { WarRoomViewer } from './components/WarRoomViewer';
 import { ConsoleViewer } from './components/ConsoleViewer';
 import { FavoritesViewer } from './components/FavoritesViewer';
 import { GUIDES_DATA } from './data/guidesData';
 import { MainTab, GuideLevel, FavoriteItem } from './types';
-import { ArrowUp, Radio, Shield, Globe, Terminal, BookOpen } from 'lucide-react';
+import { ArrowUp, Radio, Shield, Globe, Terminal, BookOpen, GitBranch } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<MainTab>('guides');
   const [guideLevel, setGuideLevel] = useState<GuideLevel>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
+  const [focusCountryId, setFocusCountryId] = useState<string>('ger');
 
   // Favorites state persisted to localStorage
   const [favorites, setFavorites] = useState<FavoriteItem[]>(() => {
@@ -126,6 +128,11 @@ export default function App() {
             searchQuery={searchQuery}
             isFavorite={isFavorite}
             toggleFavorite={toggleFavorite}
+            onSelectLevel={setGuideLevel}
+            onNavigateTab={(tab, query) => {
+              setActiveTab(tab);
+              if (query !== undefined) setSearchQuery(query);
+            }}
           />
         )}
 
@@ -137,11 +144,24 @@ export default function App() {
           />
         )}
 
+        {activeTab === 'focus_tree' && (
+          <FocusTreeViewer
+            searchQuery={searchQuery}
+            isFavorite={isFavorite}
+            toggleFavorite={toggleFavorite}
+            initialCountryId={focusCountryId}
+          />
+        )}
+
         {activeTab === 'war_room' && (
           <WarRoomViewer
             searchQuery={searchQuery}
             isFavorite={isFavorite}
             toggleFavorite={toggleFavorite}
+            onNavigateToFocus={(cId) => {
+              setFocusCountryId(cId);
+              setActiveTab('focus_tree');
+            }}
           />
         )}
 
