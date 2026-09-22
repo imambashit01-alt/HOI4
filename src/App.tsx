@@ -17,12 +17,14 @@ import { NavalFleetDesigner } from './components/NavalFleetDesigner';
 import { AirCombatCalculator } from './components/AirCombatCalculator';
 import { MIOManager } from './components/MIOManager';
 import { PeaceConferenceSimulator } from './components/PeaceConferenceSimulator';
+import { MasterPlaybookGuide } from './components/MasterPlaybookGuide';
+import { StrategicResourceHeatmap } from './components/StrategicResourceHeatmap';
 import { GUIDES_DATA } from './data/guidesData';
 import { MainTab, GuideLevel, FavoriteItem } from './types';
 import { ArrowUp, Radio, Shield, Globe, Terminal, BookOpen, GitBranch, Swords, Cpu, Compass } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<MainTab>('guides');
+  const [activeTab, setActiveTab] = useState<MainTab>('master_playbook');
   const [guideLevel, setGuideLevel] = useState<GuideLevel>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
@@ -157,6 +159,30 @@ export default function App() {
 
       {/* Main Command & Tactical Screen */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-6 md:px-8 md:py-8">
+        {activeTab === 'master_playbook' && (
+          <MasterPlaybookGuide
+            onSelectCountry={(cId) => {
+              setFocusCountryId(cId);
+              setActiveTab('war_room');
+            }}
+            onNavigateTab={(tab) => {
+              setActiveTab(tab as MainTab);
+            }}
+          />
+        )}
+
+        {activeTab === 'strategic_resources' && (
+          <StrategicResourceHeatmap
+            onNavigateToCountry={(cId) => {
+              setFocusCountryId(cId);
+              setActiveTab('war_room');
+            }}
+            onNavigateToTab={(tab) => {
+              setActiveTab(tab as MainTab);
+            }}
+          />
+        )}
+
         {activeTab === 'guides' && (
           <GuideViewer
             guides={GUIDES_DATA}

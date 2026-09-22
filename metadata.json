@@ -1,6 +1,6 @@
 {
   "name": "Hearts of Iron IV Guide & Console",
-  "description": "Panduan taktis komprehensif Hearts of Iron IV: pelacak perang global 7 negara utama (Global War Tracker: rasio korban militer, dukungan perang, dan batas kapitulasi), simulator pelatihan divisi (waktu barak, manpower, dan kebutuhan pabrik militer), modul badan intelijen & spionase, kalkulator logistik & suplai rel, desainer armada laut (rasio 4:1), kalkulator CAS, dan manajer MIO.",
+  "description": "Panduan taktis komprehensif Hearts of Iron IV: War Room Ambient Sound (Audio API simulator markas komando PD2 & oscilloscope tabung CRT), Master Playbook (Kaya, War & Politik), Peta Panas Sumber Daya (Rubber, Tungsten, Oil), pelacak perang global 7 negara utama, simulator pelatihan divisi, modul intelijen, kalkulator logistik, desainer armada laut, dan manajer MIO.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

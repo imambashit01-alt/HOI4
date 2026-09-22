@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Search, BookOpen, Shield, Globe, Terminal, Star, Radio,
   Activity, GitBranch, Cpu, Swords, Compass, Sparkles, Target,
-  Anchor, Plane, Factory, Landmark, Truck, Eye, Users
+  Anchor, Plane, Factory, Landmark, Truck, Eye, Users, Fuel
 } from 'lucide-react';
 import { MainTab, GuideLevel } from '../types';
 import { AmbientSoundToggle } from './AmbientSoundToggle';
@@ -119,6 +119,38 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Navigation Tabs */}
         <div className="mt-5 flex flex-wrap items-center justify-between gap-2.5 border-t border-[#223028] pt-3.5">
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+            {/* 0. Master Playbook: Kaya, War & Politik */}
+            <button
+              onClick={() => setActiveTab('master_playbook')}
+              className={`flex items-center gap-2 rounded-md px-3.5 py-1.5 text-xs sm:text-sm font-medium transition-all ${
+                activeTab === 'master_playbook'
+                  ? 'border-2 border-[#f59e0b] bg-gradient-to-r from-[#45280b] to-[#291705] text-[#fef08a] shadow-lg shadow-amber-950/60 font-black ring-1 ring-amber-400/80 animate-pulse'
+                  : 'border border-[#b8860b]/60 bg-[#23180c] text-[#fde047] hover:bg-[#342412] hover:border-amber-400 font-bold'
+              }`}
+            >
+              <Sparkles className="h-4 w-4 text-amber-400" />
+              <span>★ PANDUAN UTAMA (Kaya, War &amp; Politik)</span>
+              <span className="rounded bg-amber-500/30 border border-amber-400/50 px-1.5 py-0.2 text-[9px] font-mono font-bold text-amber-200">
+                MASTER
+              </span>
+            </button>
+
+            {/* Strategic Resource Heatmap */}
+            <button
+              onClick={() => setActiveTab('strategic_resources')}
+              className={`flex items-center gap-2 rounded-md px-3.5 py-1.5 text-xs sm:text-sm font-medium transition-all ${
+                activeTab === 'strategic_resources'
+                  ? 'border-2 border-emerald-400 bg-gradient-to-r from-emerald-950 via-[#102418] to-[#0d1c14] text-emerald-100 shadow-lg shadow-emerald-950/60 font-black ring-1 ring-emerald-400/80'
+                  : 'border border-emerald-600/50 bg-[#0d1c14] text-emerald-300 hover:bg-[#132a1e] hover:border-emerald-400 font-bold'
+              }`}
+            >
+              <Fuel className="h-4 w-4 text-amber-400" />
+              <span>Peta Panas Sumber Daya (Oil, Rubber, Tungsten)</span>
+              <span className="rounded bg-emerald-500/30 border border-emerald-400/50 px-1.5 py-0.2 text-[9px] font-mono font-bold text-emerald-200">
+                HEATMAP
+              </span>
+            </button>
+
             {/* 1. Guides */}
             <button
               onClick={() => setActiveTab('guides')}

@@ -1,6 +1,8 @@
 export type GuideLevel = 'all' | 'pemula' | 'menengah' | 'ahli';
 
 export type MainTab =
+  | 'master_playbook'
+  | 'strategic_resources'
   | 'guides'
   | 'combat_calculator'
   | 'training_simulator'
@@ -115,10 +117,10 @@ export interface CountryStrategy {
   tag: string;
   name: string;
   faction: string;
-  difficulty: 'Sangat Mudah' | 'Sedang' | 'Menantang' | 'Ahli';
+  difficulty: 'Sangat Mudah' | 'Mudah' | 'Sedang' | 'Menantang' | 'Sulit' | 'Ahli' | string;
   flagColors: [string, string];
   flagSymbol: string;
-  ideology: 'Fascism' | 'Communism' | 'Democratic' | 'Non-Aligned';
+  ideology: 'Fascism' | 'Communism' | 'Democratic' | 'Non-Aligned' | string;
   leader: string;
   startingCivilianFactories: number;
   startingMilitaryFactories: number;
@@ -129,6 +131,50 @@ export interface CountryStrategy {
   militaryStrategy: string;
   keyChallenges: string[];
   proTips: string;
+  // Deep tactical and geopolitical context
+  geopoliticalContext?: string;
+  howToGetRich?: string | {
+    civSnowball: string;
+    resourceStrategy: string;
+    tradePolicy: string;
+    warPlunder: string;
+  };
+  howToWinWar?: string | {
+    recommendedDoctrine: string;
+    recommendedTemplate: string;
+    theaterStrategy: string;
+    navalAirAdvice: string;
+  };
+  howToMasterPolitics?: string | {
+    topAdvisors: string[];
+    stabilityWarSupport: string;
+    debuffHandling: string;
+    recommendedFocusOrder: string[];
+  };
+  stepByStepGameplan?: {
+    phase1: string; // 1936-1937
+    phase2: string; // 1938-1939
+    phase3: string; // 1940-1942
+    phase4: string; // 1943-1945
+  };
+  masterPlan1936_1945?: {
+    phase: string;
+    period: string;
+    title: string;
+    strategicGoal: string;
+  }[];
+  startingForces?: {
+    divisions: number;
+    airplanes: number;
+    ships: number;
+    manpowerPool: string;
+  };
+  vitalResources?: {
+    surplus: string[];
+    deficits: string[];
+    oilStatus: string;
+    rubberStatus: string;
+  };
 }
 
 export interface FavoriteItem {
@@ -360,6 +406,70 @@ export interface WarRoomBackupConfig {
     selectedCountryId?: string;
     vintageThemePreferred?: boolean;
   };
+}
+
+export type CriticalResourceType = 'rubber' | 'tungsten' | 'oil';
+
+export interface StrategicResourceHotspot {
+  id: string;
+  name: string;
+  region: 'europe' | 'asia_pacific' | 'americas' | 'middle_east' | 'africa';
+  countryTag: string;
+  countryName: string;
+  faction: 'Allies' | 'Axis' | 'Comintern' | 'Neutral';
+  resourceType: CriticalResourceType;
+  amount1936: number; // units in HOI4 1936 start
+  worldSharePercent: number; // percentage of global production
+  // SVG coordinates on standard 1000x560 tactical map
+  x: number;
+  y: number;
+  // Regional map coordinates
+  regionalCoordinates?: {
+    theatre: 'europe' | 'asia_pacific' | 'americas' | 'middle_east';
+    x: number;
+    y: number;
+  };
+  keyProvinces: string[];
+  chokepointRisk: 'Ekstrem' | 'Tinggi' | 'Sedang' | 'Rendah';
+  chokepointName: string;
+  militaryCriticality: string;
+  dominationStrategy: {
+    axisTactic: string;
+    alliesTactic: string;
+    sovietsTactic: string;
+    japanTactic?: string;
+  };
+  ww2HistoricalOperation: {
+    name: string;
+    year: string;
+    outcome: string;
+    details: string;
+  };
+  syntheticAlternative?: string;
+}
+
+export interface StrategicChokepoint {
+  id: string;
+  name: string;
+  threatLevel: 'Ekstrem' | 'Tinggi' | 'Sedang';
+  controllingPower: string;
+  x: number;
+  y: number;
+  affectedResources: CriticalResourceType[];
+  strategicImpact: string;
+  howToControlOrBypass: string;
+}
+
+export interface StrategicConvoyRoute {
+  id: string;
+  name: string;
+  resourceType: CriticalResourceType;
+  fromLocation: string;
+  toLocation: string;
+  points: { x: number; y: number }[];
+  dailyFlowUnits: number;
+  vulnerabilityZones: string[];
+  interceptionTactics: string;
 }
 
 

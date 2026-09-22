@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   Globe, Flag, Factory, Award, CheckCircle2, AlertTriangle,
-  Lightbulb, Star, Copy, Check, Shield, Flame, BookOpen, Layers, GitBranch, Swords, Truck, TrendingUp, Map, Fuel
+  Lightbulb, Star, Copy, Check, Shield, Flame, BookOpen, Layers, GitBranch, Swords, Truck, TrendingUp, Map, Fuel, Sparkles, Radio
 } from 'lucide-react';
 import { CountryStrategy } from '../types';
 import { COUNTRIES_STRATEGY_DATA } from '../data/countryData';
@@ -13,6 +13,11 @@ import { EuropeInteractiveMap } from './EuropeInteractiveMap';
 import { LogisticsCalculator } from './LogisticsCalculator';
 import { GlobalWarTracker } from './GlobalWarTracker';
 import { AmbientSoundToggle } from './AmbientSoundToggle';
+import { CountryDossierModal } from './CountryDossierModal';
+import { MasterPlaybookGuide } from './MasterPlaybookGuide';
+import { HistoricalContextModal } from './HistoricalContextModal';
+import { StrategicResourceHeatmap } from './StrategicResourceHeatmap';
+import { WarRoomSoundConsole } from './WarRoomSoundConsole';
 
 interface WarRoomViewerProps {
   searchQuery: string;
@@ -29,7 +34,10 @@ export const WarRoomViewer: React.FC<WarRoomViewerProps> = ({
 }) => {
   const [selectedCountryId, setSelectedCountryId] = useState<string>('ger');
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'europe_map' | 'war_tracker' | 'countries' | 'doctrines' | 'battle_planner' | 'battle_estimator' | 'logistics_calculator' | 'manpower_logistics'>('europe_map');
+  const [countryCategoryFilter, setCountryCategoryFilter] = useState<string>('all');
+  const [activeTab, setActiveTab] = useState<'master_playbook' | 'countries' | 'europe_map' | 'resource_heatmap' | 'sound_console' | 'war_tracker' | 'doctrines' | 'battle_planner' | 'battle_estimator' | 'logistics_calculator' | 'manpower_logistics'>('countries');
+  const [isHistoricalModalOpen, setIsHistoricalModalOpen] = useState<boolean>(false);
+  const [historicalInitialId, setHistoricalInitialId] = useState<string>('ger');
 
   const selectedCountry = COUNTRIES_STRATEGY_DATA.find(c => c.id === selectedCountryId) || COUNTRIES_STRATEGY_DATA[0];
 
@@ -39,7 +47,20 @@ export const WarRoomViewer: React.FC<WarRoomViewerProps> = ({
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const MAJORS_TAGS = ['GER', 'SOV', 'USA', 'ENG', 'JAP', 'ITA', 'FRA', 'POL'];
+  const NORDIC_TAGS = ['FIN', 'SWE', 'NOR', 'DEN', 'EST', 'LAT', 'LIT'];
+  const BALKAN_TAGS = ['YUG', 'GRE', 'BUL', 'HUN', 'ROM', 'TUR'];
+  const EUROPE_TAGS = ['SPA', 'POR', 'HOL', 'BEL', 'SWI', 'CZE', 'AUS'];
+  const ASIA_TAGS = ['CHI', 'PRC', 'RAJ', 'AST', 'CAN'];
+
   const filteredCountries = COUNTRIES_STRATEGY_DATA.filter(c => {
+    // Category filter
+    if (countryCategoryFilter === 'majors' && !MAJORS_TAGS.includes(c.tag)) return false;
+    if (countryCategoryFilter === 'nordic' && !NORDIC_TAGS.includes(c.tag)) return false;
+    if (countryCategoryFilter === 'balkan' && !BALKAN_TAGS.includes(c.tag)) return false;
+    if (countryCategoryFilter === 'europe' && !EUROPE_TAGS.includes(c.tag)) return false;
+    if (countryCategoryFilter === 'asia' && !ASIA_TAGS.includes(c.tag)) return false;
+
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
     return (
@@ -48,7 +69,8 @@ export const WarRoomViewer: React.FC<WarRoomViewerProps> = ({
       c.faction.toLowerCase().includes(q) ||
       c.leader.toLowerCase().includes(q) ||
       c.doctrineRecommendation.toLowerCase().includes(q) ||
-      c.militaryStrategy.toLowerCase().includes(q)
+      c.militaryStrategy.toLowerCase().includes(q) ||
+      (c.geopoliticalContext && c.geopoliticalContext.toLowerCase().includes(q))
     );
   });
 
@@ -69,6 +91,37 @@ Tips Komandan: ${c.proTips}`;
       <div className="flex items-center justify-between gap-3 border-b border-[#22303c] pb-3.5 overflow-x-auto">
         <div className="flex items-center gap-2 flex-wrap">
           <button
+            id="tab-master-playbook"
+            onClick={() => setActiveTab('master_playbook')}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
+              activeTab === 'master_playbook'
+                ? 'border-2 border-[#f59e0b] bg-gradient-to-r from-[#3b240e] to-[#201509] text-[#fef08a] shadow-lg shadow-amber-950/60 font-black'
+                : 'border border-[#b8860b]/60 bg-[#1c140a] text-[#fde047] hover:border-amber-400 font-bold'
+            }`}
+          >
+            <Sparkles className="h-4 w-4 text-amber-400" />
+            <span>Doktrin Utama: Kaya, War &amp; Politik</span>
+            <span className="rounded bg-amber-500/20 border border-amber-400/40 px-1.5 py-0.5 text-[10px] font-mono text-amber-300 font-bold">
+              4 PILAR
+            </span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('countries')}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
+              activeTab === 'countries'
+                ? 'border border-[#10b981]/60 bg-[#122820] text-[#a7f3d0] shadow-md shadow-black/40 font-bold'
+                : 'border border-[#1e2a36] bg-[#0f1721] text-[#94a3b8] hover:text-[#f8fafc]'
+            }`}
+          >
+            <Globe className="h-4 w-4 text-[#10b981]" />
+            <span>Konteks Lengkap Semua Negara (30)</span>
+            <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-mono text-emerald-300 font-bold">
+              DOSSIER LENGKAP
+            </span>
+          </button>
+
+          <button
             id="tab-europe-map"
             onClick={() => setActiveTab('europe_map')}
             className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
@@ -81,6 +134,22 @@ Tips Komandan: ${c.proTips}`;
             <span>Peta Interaktif Eropa</span>
             <span className="rounded bg-[#f59e0b]/20 px-1.5 py-0.5 text-[10px] font-mono text-[#fde047]">
               SVG &amp; Sumber Daya
+            </span>
+          </button>
+
+          <button
+            id="tab-resource-heatmap"
+            onClick={() => setActiveTab('resource_heatmap')}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
+              activeTab === 'resource_heatmap'
+                ? 'border border-amber-400 bg-amber-950/80 text-amber-200 shadow-md shadow-black/40 font-bold'
+                : 'border border-[#1e2a36] bg-[#0f1721] text-[#94a3b8] hover:text-[#f8fafc]'
+            }`}
+          >
+            <Fuel className="h-4 w-4 text-amber-400" />
+            <span>Peta Panas Sumber Daya (Heatmap)</span>
+            <span className="rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] font-mono text-amber-300 font-bold">
+              HEATMAP
             </span>
           </button>
 
@@ -98,18 +167,6 @@ Tips Komandan: ${c.proTips}`;
             <span className="rounded bg-red-500/20 px-1.5 py-0.5 text-[10px] font-mono text-red-300 font-bold">
               7 Majors
             </span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('countries')}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
-              activeTab === 'countries'
-                ? 'border border-[#10b981]/60 bg-[#122820] text-[#a7f3d0] shadow-md shadow-black/40'
-                : 'border border-[#1e2a36] bg-[#0f1721] text-[#94a3b8] hover:text-[#f8fafc]'
-            }`}
-          >
-            <Globe className="h-4 w-4 text-[#10b981]" />
-            <span>Peta Kekuatan Negara PD II</span>
           </button>
 
           <button
@@ -185,6 +242,22 @@ Tips Komandan: ${c.proTips}`;
             <Truck className="h-4 w-4 text-[#10b981]" />
             <span>Konsumsi Manpower &amp; Mils</span>
           </button>
+
+          <button
+            id="tab-sound-console"
+            onClick={() => setActiveTab('sound_console')}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
+              activeTab === 'sound_console'
+                ? 'border border-amber-400 bg-amber-950/80 text-amber-200 shadow-md shadow-black/40 font-bold'
+                : 'border border-[#1e2a36] bg-[#0f1721] text-[#94a3b8] hover:text-[#f8fafc]'
+            }`}
+          >
+            <Radio className="h-4 w-4 text-amber-400" />
+            <span>Konsol Audio PD2 (Ambient Sound)</span>
+            <span className="rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] font-mono text-amber-300 font-bold">
+              AUDIO API
+            </span>
+          </button>
         </div>
 
         {/* WW2 Radio Ambient Toggle */}
@@ -208,20 +281,105 @@ Tips Komandan: ${c.proTips}`;
         </div>
       )}
 
+      {/* VIEW: STRATEGIC RESOURCE HEATMAP */}
+      {activeTab === 'resource_heatmap' && (
+        <div className="space-y-4">
+          <StrategicResourceHeatmap
+            onNavigateToCountry={(cId) => {
+              setSelectedCountryId(cId);
+              setActiveTab('countries');
+            }}
+            onNavigateToTab={(tab) => {
+              if (tab === 'war_room') setActiveTab('countries');
+            }}
+          />
+        </div>
+      )}
+
+      {/* VIEW: WAR ROOM SOUND CONSOLE */}
+      {activeTab === 'sound_console' && (
+        <div className="space-y-4">
+          <WarRoomSoundConsole />
+        </div>
+      )}
+
       {/* VIEW: GLOBAL WAR TRACKER (7 MAJORS) */}
       {activeTab === 'war_tracker' && (
         <GlobalWarTracker />
+      )}
+
+      {/* VIEW: MASTER PLAYBOOK (KAYA, WAR & POLITIK) */}
+      {activeTab === 'master_playbook' && (
+        <MasterPlaybookGuide
+          onSelectCountry={(cId) => {
+            setSelectedCountryId(cId);
+            setActiveTab('countries');
+          }}
+          onNavigateToFocus={onNavigateToFocus}
+        />
       )}
 
       {/* VIEW 1: COUNTRY STRATEGIES */}
       {activeTab === 'countries' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Column: Country Selector (4 cols) */}
-          <div className="lg:col-span-4 space-y-2">
-            <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#64748b] block mb-2">
-              Pilih Markas Komando Negara:
-            </span>
-            <div className="space-y-2">
+          <div className="lg:col-span-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#64748b]">
+                Pilih Markas Komando:
+              </span>
+              <span className="text-[11px] font-mono text-emerald-400 bg-emerald-950/70 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">
+                {filteredCountries.length} / {COUNTRIES_STRATEGY_DATA.length} Negara
+              </span>
+            </div>
+
+            {/* Historical Context Modal Quick Trigger */}
+            <button
+              id="open-7majors-historical-modal-btn"
+              onClick={() => {
+                const initial = ['ger', 'sov', 'usa', 'eng', 'jap', 'ita', 'fra'].includes(selectedCountryId)
+                  ? selectedCountryId
+                  : 'ger';
+                setHistoricalInitialId(initial);
+                setIsHistoricalModalOpen(true);
+              }}
+              className="w-full flex items-center justify-between gap-2 rounded-xl border border-amber-500/60 bg-gradient-to-r from-amber-950/70 via-[#1e170d] to-[#141b18] px-3.5 py-2 text-xs font-bold text-amber-200 hover:border-amber-400 hover:text-amber-100 transition-all shadow-md"
+            >
+              <div className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4 text-amber-400" />
+                <span>Arsip Sejarah &amp; Misi Utama (7 Majors)</span>
+              </div>
+              <span className="rounded bg-amber-500/20 px-1.5 py-0.2 text-[10px] font-mono text-amber-300">
+                Overlay
+              </span>
+            </button>
+
+            {/* Category Filter Pills */}
+            <div className="flex flex-wrap gap-1 bg-[#0b1410] p-1.5 rounded-xl border border-[#1e2a22]">
+              {[
+                { id: 'all', label: 'Semua (30)' },
+                { id: 'majors', label: 'Majors (8)' },
+                { id: 'nordic', label: 'Nordik & Baltik' },
+                { id: 'balkan', label: 'Balkan & Med' },
+                { id: 'europe', label: 'Eropa Lain' },
+                { id: 'asia', label: 'Asia & Sekutu' },
+              ].map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => setCountryCategoryFilter(cat.id)}
+                  className={`rounded-lg px-2.5 py-1 text-[11px] font-medium transition-all ${
+                    countryCategoryFilter === cat.id
+                      ? 'bg-amber-500 text-black font-bold shadow'
+                      : 'text-[#94a3b8] hover:text-[#f8fafc] hover:bg-[#15231c]'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Scrollable Country Selector List */}
+            <div className="space-y-2 max-h-[750px] overflow-y-auto pr-1 scrollbar-thin">
               {filteredCountries.map(country => {
                 const isSelected = country.id === selectedCountryId;
                 const isFav = isFavorite(country.id);
@@ -230,34 +388,34 @@ Tips Komandan: ${c.proTips}`;
                   <button
                     key={country.id}
                     onClick={() => setSelectedCountryId(country.id)}
-                    className={`w-full flex items-center justify-between rounded-xl border p-3.5 text-left transition-all ${
+                    className={`w-full flex items-center justify-between rounded-xl border p-3 text-left transition-all ${
                       isSelected
-                        ? 'border-[#10b981]/60 bg-gradient-to-r from-[#132c23] to-[#0f1a18] shadow-md shadow-black/40 text-[#f8fafc]'
+                        ? 'border-amber-500/80 bg-gradient-to-r from-[#2a1e0f] via-[#1f170c] to-[#121915] shadow-lg shadow-black/50 text-[#f8fafc] ring-1 ring-amber-400/30'
                         : 'border-[#1e2938] bg-[#111923] text-[#94a3b8] hover:border-[#2f4356] hover:text-[#f1f5f9]'
                     }`}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2.5 min-w-0">
                       <div
-                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg font-serif text-lg font-bold text-white shadow-inner"
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg font-serif text-base font-bold text-white shadow-inner"
                         style={{
                           background: `linear-gradient(135deg, ${country.flagColors[0]}, ${country.flagColors[1]})`
                         }}
                       >
                         {country.flagSymbol}
                       </div>
-                      <div>
-                        <div className="font-bold text-sm tracking-tight text-[#f8fafc] flex items-center gap-2">
-                          {country.name}
-                          <span className="font-mono text-[11px] text-[#38bdf8] bg-[#0c2438] px-1.5 py-0.2 rounded">
+                      <div className="min-w-0">
+                        <div className="font-bold text-xs sm:text-sm tracking-tight text-[#f8fafc] flex items-center gap-1.5 truncate">
+                          <span className="truncate">{country.name}</span>
+                          <span className="font-mono text-[10px] text-amber-300 bg-amber-950/80 px-1.5 py-0.2 rounded border border-amber-500/30 shrink-0">
                             {country.tag}
                           </span>
                         </div>
-                        <div className="text-xs text-[#94a3b8]">{country.faction}</div>
+                        <div className="text-[11px] text-[#94a3b8] truncate">{country.faction}</div>
                       </div>
                     </div>
 
-                    <div className="text-right">
-                      <span className="rounded bg-[#1e293b] px-2 py-0.5 text-[10px] font-mono text-[#cbd5e1] block">
+                    <div className="text-right shrink-0 ml-2">
+                      <span className="rounded bg-[#1e293b] px-1.5 py-0.5 text-[9px] font-mono text-[#cbd5e1] block">
                         {country.difficulty}
                       </span>
                     </div>
@@ -267,190 +425,13 @@ Tips Komandan: ${c.proTips}`;
             </div>
           </div>
 
-          {/* Right Column: Strategic Dossier (8 cols) */}
+          {/* Right Column: Complete Strategic Dossier (8 cols) */}
           <div className="lg:col-span-8">
-            <div className="rounded-xl border border-[#223344] bg-[#111923] shadow-xl shadow-black/50 overflow-hidden">
-              {/* Dossier Header */}
-              <div
-                className="p-6 border-b border-[#1b2a38] relative overflow-hidden"
-                style={{
-                  background: `linear-gradient(135deg, rgba(17,25,35,0.95), rgba(15,23,32,0.98))`
-                }}
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div
-                      className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl font-serif text-2xl font-bold text-white shadow-lg shadow-black/60 border border-white/10"
-                      style={{
-                        background: `linear-gradient(135deg, ${selectedCountry.flagColors[0]}, ${selectedCountry.flagColors[1]})`
-                      }}
-                    >
-                      {selectedCountry.flagSymbol}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2 flex-wrap mb-1">
-                        <span className="font-mono text-xs font-bold text-[#38bdf8] bg-[#0c2438] px-2 py-0.5 rounded border border-[#38bdf8]/30">
-                          TAG: {selectedCountry.tag}
-                        </span>
-                        <span className="text-xs font-mono text-[#fbbf24] bg-[#3b2b13] px-2 py-0.5 rounded border border-[#b45309]/30">
-                          {selectedCountry.ideology}
-                        </span>
-                        <span className="text-xs font-mono text-[#94a3b8]">
-                          Tingkat Kesulitan: <strong className="text-[#f1f5f9]">{selectedCountry.difficulty}</strong>
-                        </span>
-                      </div>
-                      <h2 className="text-2xl font-black text-[#f8fafc] tracking-tight">
-                        {selectedCountry.name}
-                      </h2>
-                      <p className="text-xs text-[#94a3b8] font-mono mt-0.5">
-                        Pemimpin: <span className="text-[#f1f5f9] font-bold">{selectedCountry.leader}</span> • Faksi: <span className="text-[#38bdf8]">{selectedCountry.faction}</span>
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => toggleFavorite({
-                        id: selectedCountry.id,
-                        type: 'country',
-                        title: selectedCountry.name,
-                        subtitle: `${selectedCountry.tag} • ${selectedCountry.faction}`,
-                        tag: 'Negara'
-                      })}
-                      className={`rounded-lg border p-2.5 text-xs transition-colors ${
-                        isFavorite(selectedCountry.id)
-                          ? 'border-[#eab308]/60 bg-[#2b2512] text-[#facc15]'
-                          : 'border-[#22303c] bg-[#131b24] text-[#64748b] hover:text-[#f8fafc]'
-                      }`}
-                      title={isFavorite(selectedCountry.id) ? 'Hapus dari Favorit' : 'Simpan ke Favorit'}
-                    >
-                      <Star className={`h-4 w-4 ${isFavorite(selectedCountry.id) ? 'fill-current' : ''}`} />
-                    </button>
-
-                    <button
-                      onClick={() => handleCopy(selectedCountry.id, generateCountryCopyText(selectedCountry))}
-                      className="flex items-center gap-1.5 rounded-lg border border-[#22303c] bg-[#131b24] px-3 py-2 text-xs font-semibold text-[#cbd5e1] hover:border-[#10b981] hover:text-[#f8fafc] transition-colors"
-                    >
-                      {copiedId === selectedCountry.id ? <Check className="h-4 w-4 text-[#22c55e]" /> : <Copy className="h-4 w-4" />}
-                      <span>{copiedId === selectedCountry.id ? 'Tersalin!' : 'Salin Doktrin'}</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Industrial Base Bar */}
-                <div className="mt-5 grid grid-cols-3 gap-2.5 font-mono text-center">
-                  <div className="rounded-lg border border-[#d97706]/40 bg-[#261f14] p-2.5">
-                    <div className="text-[10px] uppercase font-bold text-[#fbbf24]">Pabrik Sipil (Civs)</div>
-                    <div className="text-lg font-black text-[#fde047]">{selectedCountry.startingCivilianFactories}</div>
-                  </div>
-                  <div className="rounded-lg border border-[#16a34a]/40 bg-[#122b1c] p-2.5">
-                    <div className="text-[10px] uppercase font-bold text-[#4ade80]">Pabrik Militer (Mils)</div>
-                    <div className="text-lg font-black text-[#86efac]">{selectedCountry.startingMilitaryFactories}</div>
-                  </div>
-                  <div className="rounded-lg border border-[#2563eb]/40 bg-[#14233c] p-2.5">
-                    <div className="text-[10px] uppercase font-bold text-[#60a5fa]">Galangan Kapal (Docks)</div>
-                    <div className="text-lg font-black text-[#93c5fd]">{selectedCountry.startingDockyards}</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Dossier Body */}
-              <div className="p-6 space-y-6 text-xs md:text-sm">
-                {/* Recommended Doctrine */}
-                <div className="rounded-lg border border-[#1e2e3e] bg-[#0d1620] p-4 space-y-1">
-                  <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-[#38bdf8] flex items-center gap-1.5">
-                    <Award className="h-4 w-4 text-[#38bdf8]" />
-                    Rekomendasi Doktrin Utama:
-                  </span>
-                  <div className="text-sm font-semibold text-[#f8fafc]">
-                    {selectedCountry.doctrineRecommendation}
-                  </div>
-                </div>
-
-                {/* Priority Focus Path 1936-1937 */}
-                <div className="space-y-2.5">
-                  <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-[#94a3b8] flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-[#10b981]" />
-                    Urutan Fokus Nasional 1936-1937 (Prioritas Utama)
-                  </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {selectedCountry.focusPath1936.map((focus, fIdx) => (
-                      <div
-                        key={fIdx}
-                        className="flex items-center gap-2.5 rounded-lg border border-[#1e2a38] bg-[#141e2a] p-2.5 text-xs text-[#cbd5e1]"
-                      >
-                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1e2e40] font-mono text-[11px] text-[#38bdf8] font-bold">
-                          {fIdx + 1}
-                        </span>
-                        <span className="font-medium text-[#f1f5f9]">{focus}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {onNavigateToFocus && (
-                    <button
-                      onClick={() => onNavigateToFocus(selectedCountry.id)}
-                      className="mt-3 w-full flex items-center justify-center gap-2 rounded-lg border border-[#f59e0b]/50 bg-gradient-to-r from-[#261e12] to-[#1c1811] py-2.5 px-4 text-xs font-bold text-[#fef3c7] hover:border-[#f59e0b] hover:from-[#352918] hover:to-[#282117] transition-all shadow-md shadow-black/40"
-                    >
-                      <GitBranch className="h-4 w-4 text-[#f59e0b]" />
-                      <span>Buka Kalkulator Neraca &amp; Pohon Fokus ({selectedCountry.tag})</span>
-                      <span className="rounded bg-[#f59e0b]/20 px-1.5 py-0.2 text-[10px] font-mono text-[#fbbf24]">
-                        Live Trade-off &amp; Mutually Exclusive
-                      </span>
-                    </button>
-                  )}
-                </div>
-
-                {/* Industrial Strategy & Military Strategy */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="rounded-lg border border-[#1e2b38] bg-[#131d27] p-4 space-y-2">
-                    <h5 className="font-mono text-xs font-bold uppercase text-[#fbbf24] flex items-center gap-1.5">
-                      <Factory className="h-4 w-4 text-[#d97706]" />
-                      Masterplan Ekonomi &amp; Pabrik
-                    </h5>
-                    <p className="text-xs leading-relaxed text-[#94a3b8]">
-                      {selectedCountry.industryStrategy}
-                    </p>
-                  </div>
-
-                  <div className="rounded-lg border border-[#1e2b38] bg-[#131d27] p-4 space-y-2">
-                    <h5 className="font-mono text-xs font-bold uppercase text-[#38bdf8] flex items-center gap-1.5">
-                      <Shield className="h-4 w-4 text-[#2563eb]" />
-                      Doktrin &amp; Rencana Operasi Militer
-                    </h5>
-                    <p className="text-xs leading-relaxed text-[#94a3b8]">
-                      {selectedCountry.militaryStrategy}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Challenges & Pro Tips */}
-                <div className="space-y-3">
-                  <div className="rounded-lg border border-[#dc2626]/40 bg-[#2b1416]/70 p-4 space-y-2">
-                    <h5 className="font-mono text-xs font-bold uppercase text-[#f87171] flex items-center gap-1.5">
-                      <AlertTriangle className="h-4 w-4 text-[#ef4444]" />
-                      Tantangan Kritis &amp; Kerentanan
-                    </h5>
-                    <ul className="space-y-1.5 text-xs text-[#fca5a5]">
-                      {selectedCountry.keyChallenges.map((ch, cIdx) => (
-                        <li key={cIdx} className="flex items-start gap-2">
-                          <span className="font-bold">•</span>
-                          <span>{ch}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="rounded-lg border border-[#d97706]/40 bg-[#261f14]/80 p-4 text-xs text-[#fef3c7] flex items-start gap-2.5">
-                    <Lightbulb className="h-5 w-5 shrink-0 text-[#f59e0b] mt-0.5" />
-                    <div>
-                      <strong className="font-bold text-[#fbbf24]">Kiat Rahasia Panglima Perang: </strong>
-                      {selectedCountry.proTips}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <CountryDossierModal
+              country={selectedCountry}
+              isEmbedded={true}
+              onNavigateToFocus={onNavigateToFocus}
+            />
           </div>
         </div>
       )}
@@ -479,6 +460,17 @@ Tips Komandan: ${c.proTips}`;
       {activeTab === 'manpower_logistics' && (
         <ManpowerLogisticsCalculator />
       )}
+
+      {/* HISTORICAL CONTEXT MODAL OVERLAY (7 MAJORS) */}
+      <HistoricalContextModal
+        isOpen={isHistoricalModalOpen}
+        onClose={() => setIsHistoricalModalOpen(false)}
+        initialCountryId={historicalInitialId}
+        onSelectCountry={(cId) => {
+          setSelectedCountryId(cId);
+          setActiveTab('countries');
+        }}
+      />
     </div>
   );
 };
