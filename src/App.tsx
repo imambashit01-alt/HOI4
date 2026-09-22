@@ -19,6 +19,8 @@ import { MIOManager } from './components/MIOManager';
 import { PeaceConferenceSimulator } from './components/PeaceConferenceSimulator';
 import { MasterPlaybookGuide } from './components/MasterPlaybookGuide';
 import { StrategicResourceHeatmap } from './components/StrategicResourceHeatmap';
+import { CommandCenterLeadersBar } from './components/CommandCenterLeadersBar';
+import { CommandPostNotificationManager } from './components/CommandPostNotificationManager';
 import { GUIDES_DATA } from './data/guidesData';
 import { MainTab, GuideLevel, FavoriteItem } from './types';
 import { ArrowUp, Radio, Shield, Globe, Terminal, BookOpen, GitBranch, Swords, Cpu, Compass } from 'lucide-react';
@@ -29,6 +31,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
   const [focusCountryId, setFocusCountryId] = useState<string>('ger');
+  const [showLeadersBar, setShowLeadersBar] = useState<boolean>(true);
 
   // Vintage Old Classic Theme state
   const [vintageTheme, setVintageTheme] = useState<boolean>(() => {
@@ -159,6 +162,37 @@ export default function App() {
 
       {/* Main Command & Tactical Screen */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-6 md:px-8 md:py-8">
+        {/* Supreme Command Leaders Bar (7 Major Nations) */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <span className="flex h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
+              <span className="font-mono text-xs uppercase tracking-wider text-amber-300 font-bold">
+                Dewan Perang Tertinggi: 7 Pemimpin Negara Utama
+              </span>
+            </div>
+            <button
+              onClick={() => setShowLeadersBar(!showLeadersBar)}
+              className="font-mono text-xs text-[#94a3b8] hover:text-amber-300 underline-offset-2 hover:underline transition-colors"
+            >
+              {showLeadersBar ? 'Sembunyikan Panel Pemimpin' : 'Tampilkan Panel Pemimpin (7)'}
+            </button>
+          </div>
+
+          {showLeadersBar && (
+            <CommandCenterLeadersBar
+              onSelectCountry={(cId) => {
+                setFocusCountryId(cId);
+                setActiveTab('war_room');
+              }}
+              onNavigateToFocus={(cId) => {
+                setFocusCountryId(cId);
+                setActiveTab('focus_tree');
+              }}
+            />
+          )}
+        </div>
+
         {activeTab === 'master_playbook' && (
           <MasterPlaybookGuide
             onSelectCountry={(cId) => {
@@ -322,6 +356,12 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Command Post Toast Notification System (Alerts & Strategic Tips) */}
+      <CommandPostNotificationManager
+        onNavigateTab={(tab) => setActiveTab(tab as MainTab)}
+        currentTab={activeTab}
+      />
     </div>
   );
 }

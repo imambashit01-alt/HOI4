@@ -45,6 +45,31 @@ export interface HOI4LeaderData {
   alternateLeaders?: HOI4AlternateLeader[];
 }
 
+export interface MajorLeaderResolvedItem {
+  tag: string;
+  countryName: string;
+  countryAdjective: string;
+  countryFlagEmoji: string;
+  leaderName: string;
+  title: string;
+  tenureYears: string;
+  ideology: 'Fascism' | 'Democratic' | 'Communism' | 'Non-Aligned';
+  subIdeology: string;
+  ideologyColor: string;
+  resolvedPortraitUrl: string;
+  traits: HOI4LeaderTrait[];
+  politicalPowerGain: string;
+  stabilityBonus: string;
+  warSupportBonus: string;
+  signatureFocus: string;
+  historicQuote: string;
+  quoteSpeaker?: string;
+  historicBio: string;
+  alternateCount: number;
+  isAlternateActive?: boolean;
+  alternateIndex?: number;
+}
+
 export const HOI4_MAJOR_LEADERS: Record<string, HOI4LeaderData> = {
   GER: {
     tag: 'GER',
@@ -58,6 +83,7 @@ export const HOI4_MAJOR_LEADERS: Record<string, HOI4LeaderData> = {
     ideologyColor: '#b91c1c',
     countryFlagEmoji: '🇩🇪',
     portraitUrls: [
+      'https://hoi4.paradoxwikis.com/images/thumb/d/d4/Adolf_Hitler.png/150px-Adolf_Hitler.png',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Hitler_portrait_crop.jpg/300px-Hitler_portrait_crop.jpg',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Bundesarchiv_Bild_183-S33880%2C_Adolf_Hitler_retouched.jpg/300px-Bundesarchiv_Bild_183-S33880%2C_Adolf_Hitler_retouched.jpg'
     ],
@@ -150,6 +176,7 @@ export const HOI4_MAJOR_LEADERS: Record<string, HOI4LeaderData> = {
     ideologyColor: '#dc2626',
     countryFlagEmoji: '☭',
     portraitUrls: [
+      'https://hoi4.paradoxwikis.com/images/thumb/5/52/Iosif_Stalin.png/150px-Iosif_Stalin.png',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Joseph_Stalin_in_July_1941.jpg/300px-Joseph_Stalin_in_July_1941.jpg',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Cropped_Stalin1943.jpg/300px-Cropped_Stalin1943.jpg'
     ],
@@ -221,6 +248,7 @@ export const HOI4_MAJOR_LEADERS: Record<string, HOI4LeaderData> = {
     ideologyColor: '#2563eb',
     countryFlagEmoji: '🇺🇸',
     portraitUrls: [
+      'https://hoi4.paradoxwikis.com/images/thumb/8/86/Franklin_Delano_Roosevelt.png/150px-Franklin_Delano_Roosevelt.png',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/FDR_1944_Color_Portrait.jpg/300px-FDR_1944_Color_Portrait.jpg',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/FDR_in_1933.jpg/300px-FDR_in_1933.jpg'
     ],
@@ -291,6 +319,7 @@ export const HOI4_MAJOR_LEADERS: Record<string, HOI4LeaderData> = {
     ideologyColor: '#1d4ed8',
     countryFlagEmoji: '🇬🇧',
     portraitUrls: [
+      'https://hoi4.paradoxwikis.com/images/thumb/0/07/Winston_Churchill.png/150px-Winston_Churchill.png',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Sir_Winston_Churchill_-_1941%2C_by_Yousuf_Karsh.jpg/300px-Sir_Winston_Churchill_-_1941%2C_by_Yousuf_Karsh.jpg',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Winston_Churchill_cph.3a49880.jpg/300px-Winston_Churchill_cph.3a49880.jpg'
     ],
@@ -362,6 +391,7 @@ export const HOI4_MAJOR_LEADERS: Record<string, HOI4LeaderData> = {
     ideologyColor: '#991b1b',
     countryFlagEmoji: '🇯🇵',
     portraitUrls: [
+      'https://hoi4.paradoxwikis.com/images/thumb/e/e0/Hirohito.png/150px-Hirohito.png',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Emperor_Hirohito_in_dress_uniform.jpg/300px-Emperor_Hirohito_in_dress_uniform.jpg',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Hirohito_in_dress_uniform.jpg/300px-Hirohito_in_dress_uniform.jpg'
     ],
@@ -432,6 +462,7 @@ export const HOI4_MAJOR_LEADERS: Record<string, HOI4LeaderData> = {
     ideologyColor: '#c2410c',
     countryFlagEmoji: '🇮🇹',
     portraitUrls: [
+      'https://hoi4.paradoxwikis.com/images/thumb/d/d0/Benito_Mussolini.png/150px-Benito_Mussolini.png',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Benito_Mussolini_in_Yugoslavia.jpg/300px-Benito_Mussolini_in_Yugoslavia.jpg',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Benito_Mussolini_in_uniform.jpg/300px-Benito_Mussolini_in_uniform.jpg'
     ],
@@ -502,6 +533,7 @@ export const HOI4_MAJOR_LEADERS: Record<string, HOI4LeaderData> = {
     ideologyColor: '#1e40af',
     countryFlagEmoji: '🇫🇷',
     portraitUrls: [
+      'https://hoi4.paradoxwikis.com/images/thumb/f/fa/%C3%89douard_Daladier.png/150px-%C3%89douard_Daladier.png',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/%C3%89douard_Daladier_1938.jpg/300px-%C3%89douard_Daladier_1938.jpg',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Edouard_Daladier_1933.jpg/300px-Edouard_Daladier_1933.jpg'
     ],
@@ -690,6 +722,70 @@ class HOI4LeaderService {
     Object.keys(HOI4_MAJOR_LEADERS).forEach(tag => {
       this.resolvePortrait(tag).catch(() => {});
     });
+  }
+
+  /**
+   * Returns canonical tags for the 7 major powers in HOI4
+   */
+  public getMajorTags(): string[] {
+    return ['GER', 'SOV', 'USA', 'ENG', 'JAP', 'ITA', 'FRA'];
+  }
+
+  /**
+   * Dynamically resolves official portraits and complete metadata for all 7 major nations simultaneously
+   */
+  public async fetchOfficialMajorLeaders(): Promise<MajorLeaderResolvedItem[]> {
+    const tags = this.getMajorTags();
+    const results = await Promise.all(
+      tags.map(tag => this.fetchMajorLeader(tag))
+    );
+    return results.filter((item): item is MajorLeaderResolvedItem => item !== null);
+  }
+
+  /**
+   * Dynamically resolves a single leader with verified portrait URL, traits, and fallback
+   */
+  public async fetchMajorLeader(tag: string, alternateIndex?: number): Promise<MajorLeaderResolvedItem | null> {
+    const leader = this.getLeader(tag);
+    if (!leader) return null;
+
+    const resolvedUrl = await this.resolvePortrait(tag, alternateIndex);
+
+    const isAlternate = alternateIndex !== undefined && leader.alternateLeaders && leader.alternateLeaders[alternateIndex];
+    const altData = isAlternate ? leader.alternateLeaders![alternateIndex] : null;
+
+    return {
+      tag: leader.tag,
+      countryName: leader.countryName,
+      countryAdjective: leader.countryAdjective,
+      countryFlagEmoji: leader.countryFlagEmoji,
+      leaderName: altData ? altData.name : leader.leaderName,
+      title: altData ? altData.title : leader.title,
+      tenureYears: altData ? altData.yearRange : leader.tenureYears,
+      ideology: altData ? altData.ideology : leader.ideology,
+      subIdeology: altData ? altData.subIdeology : leader.subIdeology,
+      ideologyColor: leader.ideologyColor,
+      resolvedPortraitUrl: resolvedUrl,
+      traits: altData ? altData.traits : leader.traits,
+      politicalPowerGain: leader.politicalPowerGain,
+      stabilityBonus: leader.stabilityBonus,
+      warSupportBonus: leader.warSupportBonus,
+      signatureFocus: leader.signatureFocus,
+      historicQuote: leader.historicQuote,
+      quoteSpeaker: leader.quoteSpeaker,
+      historicBio: altData ? altData.historicBio : leader.historicBio,
+      alternateCount: leader.alternateLeaders ? leader.alternateLeaders.length : 0,
+      isAlternateActive: !!altData,
+      alternateIndex
+    };
+  }
+
+  /**
+   * Clears the in-memory verification cache to force re-fetch
+   */
+  public clearCache(): void {
+    this.verifiedCache.clear();
+    this.failedUrls.clear();
   }
 }
 

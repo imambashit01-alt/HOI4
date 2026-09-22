@@ -1,6 +1,6 @@
 {
   "name": "Hearts of Iron IV Guide & Console",
-  "description": "Panduan taktis komprehensif Hearts of Iron IV: Peta Realistis PD II & Linimasa Sejarah (Real WW2 Map & Historical Events Timeline), War Room Ambient Sound (Audio API synthesizer markas PD2 & CRT oscilloscope), Master Playbook, Peta Panas Sumber Daya (Rubber, Tungsten, Oil), pelacak perang global 7 negara utama, simulator pelatihan divisi, kalkulator logistik, desainer armada laut, dan manajer MIO.",
+  "description": "Panduan taktis komprehensif Hearts of Iron IV: Sistem Peringatan Markas Komando (Command Post Alerts & Tips Maritim/Sumber Daya), Dewan Perang 7 Pemimpin Negara Utama PD II (Official Leader Portraits), Master Playbook, Peta Panas Sumber Daya, Audio Synthesizer Markas PD2, dan Konsol Cheat.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
