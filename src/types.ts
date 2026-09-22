@@ -1,6 +1,23 @@
 export type GuideLevel = 'all' | 'pemula' | 'menengah' | 'ahli';
 
-export type MainTab = 'guides' | 'division' | 'focus_tree' | 'tech_tree' | 'battle_planner' | 'war_room' | 'commands' | 'favorites';
+export type MainTab =
+  | 'guides'
+  | 'combat_calculator'
+  | 'training_simulator'
+  | 'logistics_calculator'
+  | 'intelligence_agency'
+  | 'global_war_tracker'
+  | 'naval_designer'
+  | 'air_calculator'
+  | 'mio_manager'
+  | 'peace_conference'
+  | 'division'
+  | 'focus_tree'
+  | 'tech_tree'
+  | 'battle_planner'
+  | 'war_room'
+  | 'commands'
+  | 'favorites';
 
 export interface GuideSection {
   id: string;

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { BattlePlanPreset, TacticalElement, TacticalDivisionMarker } from '../types';
 import { BATTLE_PLAN_PRESETS } from '../data/battlePlannerData';
+import { AmbientSoundToggle } from './AmbientSoundToggle';
 
 type DrawingTool = 'select' | 'frontline' | 'spearhead' | 'encirclement' | 'fallback' | 'marker_friendly' | 'marker_hostile' | 'eraser';
 
@@ -298,6 +299,73 @@ export const BattlePlanner: React.FC = () => {
     }, '');
   };
 
+  // Normalized simulation progress (0 to 1)
+  const simProgress = useMemo(() => {
+    if (tacticalEvaluation.estimatedHours <= 0) return 0;
+    return Math.min(1, Math.max(0, simulationHour / tacticalEvaluation.estimatedHours));
+  }, [simulationHour, tacticalEvaluation.estimatedHours]);
+
+  // Dynamic coordinates for moving markers
+  const getMarkerCoords = (marker: TacticalDivisionMarker) => {
+    if (simProgress === 0) return { x: marker.x, y: marker.y };
+    if (marker.side === 'friendly') {
+      const advanceX = (tacticalEvaluation.breakthroughProbability >= 45 ? 120 : 40) * simProgress;
+      return {
+        x: marker.x + advanceX,
+        y: marker.y + (Math.sin(simProgress * Math.PI) * 12)
+      };
+    } else {
+      if (tacticalEvaluation.breakthroughProbability > 50) {
+        const retreatX = simProgress > 0.25 ? ((simProgress - 0.25) / 0.75) * 85 : 0;
+        return {
+          x: marker.x + retreatX,
+          y: marker.y
+        };
+      } else {
+        return {
+          x: marker.x - (Math.sin(simProgress * 20) * 3),
+          y: marker.y
+        };
+      }
+    }
+  };
+
+  // Dynamic live organization
+  const getMarkerLiveOrg = (marker: TacticalDivisionMarker) => {
+    const baseOrg = marker.org || 60;
+    if (simProgress === 0) return baseOrg;
+    if (marker.side === 'friendly') {
+      const drop = (100 - tacticalEvaluation.breakthroughProbability) * 0.45 * simProgress;
+      return Math.max(8, Math.round(baseOrg - drop));
+    } else {
+      const drop = tacticalEvaluation.breakthroughProbability * 0.8 * simProgress;
+      return Math.max(0, Math.round(baseOrg - drop));
+    }
+  };
+
+  // Clash centroid for the HOI4 combat bubble
+  const battleBubbleInfo = useMemo(() => {
+    const friendly = markers.filter(m => m.side === 'friendly');
+    const hostile = markers.filter(m => m.side === 'hostile');
+    if (friendly.length === 0 || hostile.length === 0) return null;
+
+    const avgFriendlyX = friendly.reduce((acc, m) => acc + getMarkerCoords(m).x, 0) / friendly.length;
+    const avgFriendlyY = friendly.reduce((acc, m) => acc + getMarkerCoords(m).y, 0) / friendly.length;
+    const avgHostileX = hostile.reduce((acc, m) => acc + getMarkerCoords(m).x, 0) / hostile.length;
+    const avgHostileY = hostile.reduce((acc, m) => acc + getMarkerCoords(m).y, 0) / hostile.length;
+
+    const score = Math.round(
+      50 + (tacticalEvaluation.breakthroughProbability - 50) * Math.min(1, simProgress * 1.5)
+    );
+
+    return {
+      x: (avgFriendlyX + avgHostileX) / 2,
+      y: (avgFriendlyY + avgHostileY) / 2,
+      score: Math.max(1, Math.min(99, score)),
+      isWinning: score >= 50
+    };
+  }, [markers, simProgress, tacticalEvaluation.breakthroughProbability]);
+
   return (
     <div className="space-y-6">
       {/* WWII War Room Banner */}
@@ -323,6 +391,8 @@ export const BattlePlanner: React.FC = () => {
 
           {/* Action Toolbar */}
           <div className="flex flex-wrap items-center gap-2">
+            <AmbientSoundToggle compact={true} />
+
             <button
               onClick={handleExportPlanJSON}
               className="flex items-center gap-1.5 rounded-lg border border-[#b8860b]/50 bg-[#2b2112] px-3 py-2 text-xs font-medium text-[#fde047] hover:bg-[#3d2f1a] transition-all shadow"
@@ -618,19 +688,61 @@ export const BattlePlanner: React.FC = () => {
                 />
               )}
 
-              {/* Render NATO Markers */}
+              {/* Animated Tracer Fire during simulation */}
+              {simulationRunning && markers.length >= 2 && (
+                <g opacity="0.75">
+                  {markers.filter(m => m.side === 'friendly').slice(0, 3).map((fm, idx) => {
+                    const fCoords = getMarkerCoords(fm);
+                    const hostileTargets = markers.filter(m => m.side === 'hostile');
+                    if (hostileTargets.length === 0) return null;
+                    const target = hostileTargets[idx % hostileTargets.length];
+                    const hCoords = getMarkerCoords(target);
+
+                    return (
+                      <line
+                        key={`tracer-${fm.id}`}
+                        x1={fCoords.x + 20}
+                        y1={fCoords.y}
+                        x2={hCoords.x - 20}
+                        y2={hCoords.y}
+                        stroke="#f59e0b"
+                        strokeWidth="2"
+                        strokeDasharray="6 6"
+                        className="animate-pulse"
+                      />
+                    );
+                  })}
+                </g>
+              )}
+
+              {/* Render NATO Markers with Dynamic Live Motion */}
               {markers.map(marker => {
                 const isFriendly = marker.side === 'friendly';
                 const bgFill = isFriendly ? '#0284c7' : '#dc2626';
                 const strokeCol = isFriendly ? '#7dd3fc' : '#fca5a5';
+                const coords = getMarkerCoords(marker);
+                const liveOrg = getMarkerLiveOrg(marker);
 
                 return (
                   <g
                     key={marker.id}
-                    transform={`translate(${marker.x - 25}, ${marker.y - 15})`}
+                    transform={`translate(${coords.x - 25}, ${coords.y - 15})`}
                     onClick={() => handleMarkerClick(marker.id)}
-                    className="cursor-pointer"
+                    className="cursor-pointer transition-transform duration-300"
                   >
+                    {/* Live Organization Bar */}
+                    {simProgress > 0 && (
+                      <g transform="translate(0, -10)">
+                        <rect width="50" height="3.5" rx="1.5" fill="#1e293b" />
+                        <rect
+                          width={Math.max(0, Math.min(50, (liveOrg / 100) * 50))}
+                          height="3.5"
+                          rx="1.5"
+                          fill={isFriendly ? '#22c55e' : '#ef4444'}
+                        />
+                      </g>
+                    )}
+
                     {/* NATO Division Box */}
                     <rect
                       width="50"
@@ -662,6 +774,41 @@ export const BattlePlanner: React.FC = () => {
                   </g>
                 );
               })}
+
+              {/* Central HOI4 Combat Bubble during Simulation */}
+              {battleBubbleInfo && simProgress > 0 && (
+                <g transform={`translate(${battleBubbleInfo.x}, ${battleBubbleInfo.y})`}>
+                  <circle
+                    cx="0"
+                    cy="0"
+                    r="20"
+                    fill="#0f172a"
+                    stroke={battleBubbleInfo.isWinning ? '#22c55e' : '#ef4444'}
+                    strokeWidth="2.5"
+                  />
+                  <circle
+                    cx="0"
+                    cy="0"
+                    r="16"
+                    fill={battleBubbleInfo.isWinning ? '#15803d' : '#b91c1c'}
+                  />
+                  <polygon
+                    points={battleBubbleInfo.isWinning ? "3,-3 8,0 3,3" : "-3,-3 -8,0 -3,3"}
+                    fill="#ffffff"
+                  />
+                  <text
+                    x={battleBubbleInfo.isWinning ? "-2" : "2"}
+                    y="4"
+                    fill="#ffffff"
+                    fontSize="10"
+                    fontWeight="900"
+                    fontFamily="monospace"
+                    textAnchor="middle"
+                  >
+                    {battleBubbleInfo.score}
+                  </text>
+                </g>
+              )}
             </svg>
           </div>
 

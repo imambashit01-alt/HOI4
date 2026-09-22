@@ -13,6 +13,7 @@ import {
 } from '../data/focusData';
 import { EuropeInteractiveMap } from './EuropeInteractiveMap';
 import { CountryDashboard } from './CountryDashboard';
+import { CountryFlagSelector, CountryFlag } from './CountryFlagSelector';
 import { MAJOR_NATIONS_STARTING_STATS } from '../data/countryStartingStats';
 
 interface FocusTreeViewerProps {
@@ -271,97 +272,69 @@ ${activeFocusObjects.map((f, i) => `${i + 1}. ${f.name} (${f.days} hari)`).join(
         </div>
       )}
 
-      {/* Country Selector Header Tabs */}
-      <div className="rounded-xl border border-[#223344] bg-[#111923] p-4 shadow-xl shadow-black/40">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
-          <div className="flex items-center gap-2">
-            <GitBranch className="h-5 w-5 text-[#f59e0b]" />
-            <div>
-              <h2 className="text-base sm:text-lg font-black text-[#f8fafc] tracking-tight">
-                Kalkulator &amp; Analyzer Fokus Nasional PD II
-              </h2>
-              <p className="text-xs text-[#94a3b8]">
-                Pilih fokus nasional untuk menghitung akumulasi neraca kelebihan, kekurangan, pabrik, dan risiko geopolitik secara live.
-              </p>
-            </div>
+      {/* Top View Mode & Tools Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3.5 rounded-xl border border-[#2b3a32] bg-[#111914]">
+        <div className="flex items-center gap-2">
+          <GitBranch className="h-5 w-5 text-[#f59e0b]" />
+          <div>
+            <h2 className="text-base sm:text-lg font-black text-[#f8fafc] tracking-tight">
+              Pohon Fokus Nasional PD II
+            </h2>
+            <p className="text-xs text-[#cbd5e1]">
+              Pilih bendera negara untuk menganalisis jalur fokus, akumulasi pabrik, stabilitas, dan kalkulasi geopolitik.
+            </p>
           </div>
+        </div>
 
-          <div className="flex items-center gap-2 flex-wrap">
-            {/* View Mode Toggle: Tree vs Country Dashboard */}
-            <div className="flex items-center gap-1 bg-[#0c141d] p-1 rounded-lg border border-[#1e2e3f]">
-              <button
-                onClick={() => setMainViewMode('tree')}
-                className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 font-mono text-xs font-bold transition-all ${
-                  mainViewMode === 'tree'
-                    ? 'bg-[#f59e0b] text-[#0c141d] shadow-sm'
-                    : 'text-[#94a3b8] hover:text-[#f8fafc]'
-                }`}
-              >
-                <GitBranch className="h-3.5 w-3.5" />
-                <span>Pohon Fokus</span>
-              </button>
-              <button
-                onClick={() => setMainViewMode('dashboard')}
-                className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 font-mono text-xs font-bold transition-all ${
-                  mainViewMode === 'dashboard'
-                    ? 'bg-[#d97706] text-white shadow-sm'
-                    : 'text-[#94a3b8] hover:text-[#f8fafc]'
-                }`}
-              >
-                <BarChart3 className="h-3.5 w-3.5" />
-                <span>Dashboard Negara (1936)</span>
-              </button>
-            </div>
-
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* View Mode Toggle: Tree vs Country Dashboard */}
+          <div className="flex items-center gap-1 bg-[#0c1410] p-1 rounded-lg border border-[#223028]">
             <button
-              onClick={() => setShowEuropeMap(!showEuropeMap)}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-mono text-xs font-bold border transition-all ${
-                showEuropeMap
-                  ? 'border-[#f59e0b] bg-[#292212] text-[#fef3c7] shadow-sm'
-                  : 'border-[#2a3c4f] bg-[#0c141d] text-[#94a3b8] hover:text-[#f8fafc]'
+              onClick={() => setMainViewMode('tree')}
+              className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 font-mono text-xs font-bold transition-all ${
+                mainViewMode === 'tree'
+                  ? 'bg-[#f59e0b] text-[#0c1410] shadow-sm'
+                  : 'text-[#94a3b8] hover:text-[#f8fafc]'
               }`}
             >
-              <Globe className="h-4 w-4 text-[#f59e0b]" />
-              <span>{showEuropeMap ? 'Sembunyikan Peta' : 'Peta Eropa'}</span>
+              <GitBranch className="h-3.5 w-3.5" />
+              <span>Pohon Fokus</span>
             </button>
-            <span className="rounded-full bg-[#1e2e40] px-2.5 py-1 font-mono text-xs font-semibold text-[#38bdf8] border border-[#38bdf8]/30">
-              {MAJOR_COUNTRIES_FOCUS.length} Negara
-            </span>
+            <button
+              onClick={() => setMainViewMode('dashboard')}
+              className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 font-mono text-xs font-bold transition-all ${
+                mainViewMode === 'dashboard'
+                  ? 'bg-[#d97706] text-white shadow-sm'
+                  : 'text-[#94a3b8] hover:text-[#f8fafc]'
+              }`}
+            >
+              <BarChart3 className="h-3.5 w-3.5" />
+              <span>Dashboard Negara</span>
+            </button>
           </div>
-        </div>
 
-        {/* Countries Grid Buttons with Smooth Scroll */}
-        <div className="max-h-48 overflow-y-auto pr-1">
-          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-10 gap-2">
-            {MAJOR_COUNTRIES_FOCUS.map(country => {
-              const isSelected = country.id === selectedCountryId;
-              return (
-                <button
-                  key={country.id}
-                  onClick={() => handleSelectCountry(country.id)}
-                  className={`flex flex-col items-center justify-center rounded-lg border p-2 transition-all text-center ${
-                    isSelected
-                      ? 'border-[#f59e0b] bg-gradient-to-b from-[#2a2215] to-[#151c24] text-[#fef3c7] shadow-md shadow-black/50 ring-1 ring-[#f59e0b]/60'
-                      : 'border-[#1e2938] bg-[#0c141d] text-[#94a3b8] hover:border-[#33475b] hover:text-[#f8fafc]'
-                  }`}
-                >
-                  <div
-                    className="flex h-7 w-7 items-center justify-center rounded-md font-serif text-sm font-bold text-white shadow-inner mb-1"
-                    style={{
-                      background: `linear-gradient(135deg, ${country.flagColors[0]}, ${country.flagColors[1]})`
-                    }}
-                  >
-                    {country.flagSymbol}
-                  </div>
-                  <span className="font-mono text-xs font-bold text-[#f8fafc]">{country.tag}</span>
-                  <span className="text-[10px] text-[#94a3b8] truncate max-w-full font-medium">
-                    {country.name.split(' ')[0]}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+          <button
+            onClick={() => setShowEuropeMap(!showEuropeMap)}
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-mono text-xs font-bold border transition-all ${
+              showEuropeMap
+                ? 'border-[#f59e0b] bg-[#292212] text-[#fef3c7] shadow-sm'
+                : 'border-[#223028] bg-[#0c1410] text-[#94a3b8] hover:text-[#f8fafc]'
+            }`}
+          >
+            <Globe className="h-4 w-4 text-[#f59e0b]" />
+            <span>{showEuropeMap ? 'Sembunyikan Peta' : 'Peta Eropa'}</span>
+          </button>
         </div>
+      </div>
+
+      {/* Country Flag Selector Component */}
+      <CountryFlagSelector
+        selectedCountryId={selectedCountryId}
+        onSelectCountry={handleSelectCountry}
+      />
+
+      {/* Country Starting Stats Quick Strip Container */}
+      <div className="rounded-xl border border-[#223344] bg-[#111923] p-4 shadow-xl shadow-black/40">
 
         {/* Country Starting Stats Quick Strip */}
         <div className="mt-3 pt-3 border-t border-[#1e2a38] flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-xs">

@@ -3,7 +3,7 @@ import {
   Shield, Plus, Trash2, Copy, Check, Star, RefreshCw,
   Zap, Info, Target, AlertCircle, Factory, Wrench,
   ChevronRight, BarChart3, BookOpen, Layers, Flame,
-  Award, Sliders, TrendingUp, Fuel, Boxes, ArrowLeftRight, Swords
+  Award, Sliders, TrendingUp, Fuel, Boxes, ArrowLeftRight, Swords, Clock
 } from 'lucide-react';
 import { DivisionPreset } from '../types';
 import {
@@ -17,6 +17,7 @@ import { DivisionSplitCompare } from './DivisionSplitCompare';
 import { ArmyLogisticsCalculator } from './ArmyLogisticsCalculator';
 import { BattleResultEstimator } from './BattleResultEstimator';
 import { LogisticsCalculator } from './LogisticsCalculator';
+import { DivisionTrainingCalculator } from './DivisionTrainingCalculator';
 
 interface DivisionViewerProps {
   searchQuery: string;
@@ -29,7 +30,7 @@ export const DivisionViewer: React.FC<DivisionViewerProps> = ({
   isFavorite,
   toggleFavorite
 }) => {
-  const [activeSubTab, setActiveSubTab] = useState<'presets' | 'calculator' | 'battle_estimator' | 'split_compare' | 'army_logistics' | 'nsb_logistics' | 'production' | 'production_guide'>('presets');
+  const [activeSubTab, setActiveSubTab] = useState<'presets' | 'calculator' | 'training' | 'battle_estimator' | 'split_compare' | 'army_logistics' | 'nsb_logistics' | 'production' | 'production_guide'>('presets');
   const [selectedRole, setSelectedRole] = useState<string>('Semua');
   const [selectedWidthFilter, setSelectedWidthFilter] = useState<string>('Semua');
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -426,6 +427,22 @@ Tips Produksi: ${preset.productionTip || 'Prioritaskan alokasi pabrik senapan da
           </button>
 
           <button
+            id="tab-division-training"
+            onClick={() => setActiveSubTab('training')}
+            className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs sm:text-sm font-semibold transition-all whitespace-nowrap ${
+              activeSubTab === 'training'
+                ? 'border border-[#10b981]/70 bg-[#102b1e] text-[#6ee7b7] shadow-md shadow-black/40 ring-1 ring-[#10b981]/50'
+                : 'border border-[#1e2a36] bg-[#0f1721] text-[#94a3b8] hover:text-[#f8fafc]'
+            }`}
+          >
+            <Clock className="h-4 w-4 text-[#10b981]" />
+            <span>Kalkulator Waktu Latih (Training)</span>
+            <span className="rounded bg-[#10b981]/20 px-1.5 py-0.2 text-[10px] font-mono text-[#34d399] font-bold">
+              Baru
+            </span>
+          </button>
+
+          <button
             id="tab-division-battle-estimator"
             onClick={() => setActiveSubTab('battle_estimator')}
             className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs sm:text-sm font-semibold transition-all whitespace-nowrap ${
@@ -757,6 +774,15 @@ Tips Produksi: ${preset.productionTip || 'Prioritaskan alokasi pabrik senapan da
                     </button>
 
                     <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setActiveSubTab('training')}
+                        className="rounded border border-[#10b981]/50 bg-[#12281c] px-2.5 py-1.5 text-xs font-medium text-[#6ee7b7] hover:bg-[#1a3a28] transition-colors flex items-center gap-1"
+                        title="Hitung estimasi waktu latih divisi & kebutuhan antrean"
+                      >
+                        <Clock className="h-3 w-3" />
+                        Waktu Latih
+                      </button>
+
                       <button
                         onClick={() => sendToProductionPlanner(preset.id)}
                         className="rounded border border-[#10b981]/50 bg-[#12281c] px-2.5 py-1.5 text-xs font-medium text-[#6ee7b7] hover:bg-[#1a3a28] transition-colors flex items-center gap-1"
@@ -1542,6 +1568,11 @@ ${productionAnalysis.fullArmyEquipment.map(e => `- ${e.name}: ${e.recommendedMil
             </div>
           </div>
         </div>
+      )}
+
+      {/* VIEW: TRAINING TIME & EQUIPMENT DEPLOYMENT CALCULATOR */}
+      {activeSubTab === 'training' && (
+        <DivisionTrainingCalculator customDivisionStats={liveStats} />
       )}
 
       {/* VIEW 5: SPLIT-VIEW COMPARATOR */}

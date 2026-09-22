@@ -1,6 +1,6 @@
 {
   "name": "Hearts of Iron IV Guide & Console",
-  "description": "Panduan taktis komprehensif Hearts of Iron IV bertema Perang Dunia II klasik: peta interaktif SVG Eropa 1936-1939 dengan persebaran sumber daya & navigasi pohon fokus, 100+ panduan strategi, pohon riset teknologi, battle planner canvas, kalkulator perang & logistik.",
+  "description": "Panduan taktis komprehensif Hearts of Iron IV: pelacak perang global 7 negara utama (Global War Tracker: rasio korban militer, dukungan perang, dan batas kapitulasi), simulator pelatihan divisi (waktu barak, manpower, dan kebutuhan pabrik militer), modul badan intelijen & spionase, kalkulator logistik & suplai rel, desainer armada laut (rasio 4:1), kalkulator CAS, dan manajer MIO.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

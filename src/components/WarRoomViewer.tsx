@@ -11,6 +11,8 @@ import { ManpowerLogisticsCalculator } from './ManpowerLogisticsCalculator';
 import { BattleResultEstimator } from './BattleResultEstimator';
 import { EuropeInteractiveMap } from './EuropeInteractiveMap';
 import { LogisticsCalculator } from './LogisticsCalculator';
+import { GlobalWarTracker } from './GlobalWarTracker';
+import { AmbientSoundToggle } from './AmbientSoundToggle';
 
 interface WarRoomViewerProps {
   searchQuery: string;
@@ -27,7 +29,7 @@ export const WarRoomViewer: React.FC<WarRoomViewerProps> = ({
 }) => {
   const [selectedCountryId, setSelectedCountryId] = useState<string>('ger');
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'europe_map' | 'countries' | 'doctrines' | 'battle_planner' | 'battle_estimator' | 'logistics_calculator' | 'manpower_logistics'>('europe_map');
+  const [activeTab, setActiveTab] = useState<'europe_map' | 'war_tracker' | 'countries' | 'doctrines' | 'battle_planner' | 'battle_estimator' | 'logistics_calculator' | 'manpower_logistics'>('europe_map');
 
   const selectedCountry = COUNTRIES_STRATEGY_DATA.find(c => c.id === selectedCountryId) || COUNTRIES_STRATEGY_DATA[0];
 
@@ -79,6 +81,22 @@ Tips Komandan: ${c.proTips}`;
             <span>Peta Interaktif Eropa</span>
             <span className="rounded bg-[#f59e0b]/20 px-1.5 py-0.5 text-[10px] font-mono text-[#fde047]">
               SVG &amp; Sumber Daya
+            </span>
+          </button>
+
+          <button
+            id="tab-global-war-tracker"
+            onClick={() => setActiveTab('war_tracker')}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
+              activeTab === 'war_tracker'
+                ? 'border border-[#ef4444]/60 bg-[#321215] text-[#fca5a5] shadow-md shadow-black/40 font-bold'
+                : 'border border-[#1e2a36] bg-[#0f1721] text-[#94a3b8] hover:text-[#f8fafc]'
+            }`}
+          >
+            <Globe className="h-4 w-4 text-[#ef4444]" />
+            <span>Global War Tracker</span>
+            <span className="rounded bg-red-500/20 px-1.5 py-0.5 text-[10px] font-mono text-red-300 font-bold">
+              7 Majors
             </span>
           </button>
 
@@ -168,6 +186,11 @@ Tips Komandan: ${c.proTips}`;
             <span>Konsumsi Manpower &amp; Mils</span>
           </button>
         </div>
+
+        {/* WW2 Radio Ambient Toggle */}
+        <div className="shrink-0 flex items-center">
+          <AmbientSoundToggle compact={true} />
+        </div>
       </div>
 
       {/* VIEW 0: EUROPE INTERACTIVE MAP */}
@@ -183,6 +206,11 @@ Tips Komandan: ${c.proTips}`;
             }}
           />
         </div>
+      )}
+
+      {/* VIEW: GLOBAL WAR TRACKER (7 MAJORS) */}
+      {activeTab === 'war_tracker' && (
+        <GlobalWarTracker />
       )}
 
       {/* VIEW 1: COUNTRY STRATEGIES */}

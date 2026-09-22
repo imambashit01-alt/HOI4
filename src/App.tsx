@@ -8,6 +8,15 @@ import { ConsoleViewer } from './components/ConsoleViewer';
 import { FavoritesViewer } from './components/FavoritesViewer';
 import { TechTreeViewer } from './components/TechTreeViewer';
 import { BattlePlanner } from './components/BattlePlanner';
+import { CombatCalculator } from './components/CombatCalculator';
+import { LogisticsCalculator } from './components/LogisticsCalculator';
+import { IntelligenceAgency } from './components/IntelligenceAgency';
+import { GlobalWarTracker } from './components/GlobalWarTracker';
+import { DivisionTrainingSimulator } from './components/DivisionTrainingSimulator';
+import { NavalFleetDesigner } from './components/NavalFleetDesigner';
+import { AirCombatCalculator } from './components/AirCombatCalculator';
+import { MIOManager } from './components/MIOManager';
+import { PeaceConferenceSimulator } from './components/PeaceConferenceSimulator';
 import { GUIDES_DATA } from './data/guidesData';
 import { MainTab, GuideLevel, FavoriteItem } from './types';
 import { ArrowUp, Radio, Shield, Globe, Terminal, BookOpen, GitBranch, Swords, Cpu, Compass } from 'lucide-react';
@@ -161,6 +170,42 @@ export default function App() {
               if (query !== undefined) setSearchQuery(query);
             }}
           />
+        )}
+
+        {activeTab === 'combat_calculator' && (
+          <CombatCalculator />
+        )}
+
+        {activeTab === 'global_war_tracker' && (
+          <GlobalWarTracker />
+        )}
+
+        {activeTab === 'training_simulator' && (
+          <DivisionTrainingSimulator />
+        )}
+
+        {activeTab === 'logistics_calculator' && (
+          <LogisticsCalculator />
+        )}
+
+        {activeTab === 'intelligence_agency' && (
+          <IntelligenceAgency />
+        )}
+
+        {activeTab === 'naval_designer' && (
+          <NavalFleetDesigner />
+        )}
+
+        {activeTab === 'air_calculator' && (
+          <AirCombatCalculator />
+        )}
+
+        {activeTab === 'mio_manager' && (
+          <MIOManager />
+        )}
+
+        {activeTab === 'peace_conference' && (
+          <PeaceConferenceSimulator />
         )}
 
         {activeTab === 'battle_planner' && (

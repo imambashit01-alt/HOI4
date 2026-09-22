@@ -1,9 +1,11 @@
 import React from 'react';
 import {
   Search, BookOpen, Shield, Globe, Terminal, Star, Radio,
-  Activity, GitBranch, Cpu, Swords, Compass, Sparkles
+  Activity, GitBranch, Cpu, Swords, Compass, Sparkles, Target,
+  Anchor, Plane, Factory, Landmark, Truck, Eye, Users
 } from 'lucide-react';
 import { MainTab, GuideLevel } from '../types';
+import { AmbientSoundToggle } from './AmbientSoundToggle';
 
 interface HeaderProps {
   activeTab: MainTab;
@@ -93,6 +95,9 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </div>
 
+            {/* Ambient WW2 Radio Sound Toggle */}
+            <AmbientSoundToggle compact={true} />
+
             {/* Vintage Old Classic Theme Toggle */}
             {setVintageTheme && (
               <button
@@ -127,7 +132,145 @@ export const Header: React.FC<HeaderProps> = ({
               <span>Doktrin &amp; Panduan</span>
             </button>
 
-            {/* 2. Battle Planner & War Calculator */}
+            {/* Global War Tracker */}
+            <button
+              onClick={() => setActiveTab('global_war_tracker')}
+              className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-xs sm:text-sm font-medium transition-all ${
+                activeTab === 'global_war_tracker'
+                  ? 'border border-red-500 bg-red-950/70 text-red-200 shadow-sm font-bold ring-1 ring-red-500/50'
+                  : 'text-[#94a3b8] hover:bg-[#16211a] hover:text-[#e2e8f0]'
+              }`}
+            >
+              <Globe className="h-4 w-4 text-red-400" />
+              <span>War Tracker (7 Majors)</span>
+              <span className="rounded bg-red-500/20 border border-red-400/40 px-1 py-0.2 text-[9px] font-mono font-bold text-red-300">
+                BARU
+              </span>
+            </button>
+
+            {/* Division Training Simulator */}
+            <button
+              onClick={() => setActiveTab('training_simulator')}
+              className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-xs sm:text-sm font-medium transition-all ${
+                activeTab === 'training_simulator'
+                  ? 'border border-emerald-500 bg-emerald-950/70 text-emerald-200 shadow-sm font-bold ring-1 ring-emerald-500/50'
+                  : 'text-[#94a3b8] hover:bg-[#16211a] hover:text-[#e2e8f0]'
+              }`}
+            >
+              <Users className="h-4 w-4 text-emerald-400" />
+              <span>Latihan Divisi</span>
+              <span className="rounded bg-emerald-500/20 border border-emerald-400/40 px-1 py-0.2 text-[9px] font-mono font-bold text-emerald-300">
+                BARU
+              </span>
+            </button>
+
+            {/* 2. Combat Calculator */}
+            <button
+              onClick={() => setActiveTab('combat_calculator')}
+              className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-xs sm:text-sm font-medium transition-all ${
+                activeTab === 'combat_calculator'
+                  ? 'border border-[#ef4444] bg-[#3a1414] text-[#fca5a5] shadow-sm font-bold ring-1 ring-[#ef4444]/50'
+                  : 'text-[#94a3b8] hover:bg-[#16211a] hover:text-[#e2e8f0]'
+              }`}
+            >
+              <Target className="h-4 w-4 text-[#ef4444]" />
+              <span>Combat Calculator</span>
+            </button>
+
+            {/* Logistics & Supply Calculator */}
+            <button
+              onClick={() => setActiveTab('logistics_calculator')}
+              className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-xs sm:text-sm font-medium transition-all ${
+                activeTab === 'logistics_calculator'
+                  ? 'border border-amber-500 bg-amber-950/70 text-amber-200 shadow-sm font-bold ring-1 ring-amber-500/50'
+                  : 'text-[#94a3b8] hover:bg-[#16211a] hover:text-[#e2e8f0]'
+              }`}
+            >
+              <Truck className="h-4 w-4 text-amber-400" />
+              <span>Logistik &amp; Suplai</span>
+            </button>
+
+            {/* Intelligence Agency & Espionage */}
+            <button
+              onClick={() => setActiveTab('intelligence_agency')}
+              className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-xs sm:text-sm font-medium transition-all ${
+                activeTab === 'intelligence_agency'
+                  ? 'border border-indigo-400 bg-indigo-950/70 text-indigo-200 shadow-sm font-bold ring-1 ring-indigo-400/50'
+                  : 'text-[#94a3b8] hover:bg-[#16211a] hover:text-[#e2e8f0]'
+              }`}
+            >
+              <Eye className="h-4 w-4 text-indigo-400" />
+              <span>Badan Intelijen</span>
+              <span className="rounded bg-indigo-500/20 border border-indigo-400/40 px-1 py-0.2 text-[9px] font-mono font-bold text-indigo-300">
+                BARU
+              </span>
+            </button>
+
+            {/* Naval Task Force Designer */}
+            <button
+              onClick={() => setActiveTab('naval_designer')}
+              className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-xs sm:text-sm font-medium transition-all ${
+                activeTab === 'naval_designer'
+                  ? 'border border-sky-400 bg-sky-950/70 text-sky-200 shadow-sm font-bold ring-1 ring-sky-400/50'
+                  : 'text-[#94a3b8] hover:bg-[#16211a] hover:text-[#e2e8f0]'
+              }`}
+            >
+              <Anchor className="h-4 w-4 text-sky-400" />
+              <span>Armada Laut (4:1)</span>
+              <span className="rounded bg-sky-500/20 border border-sky-400/40 px-1 py-0.2 text-[9px] font-mono font-bold text-sky-300">
+                BARU
+              </span>
+            </button>
+
+            {/* Air Wing & CAS Calculator */}
+            <button
+              onClick={() => setActiveTab('air_calculator')}
+              className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-xs sm:text-sm font-medium transition-all ${
+                activeTab === 'air_calculator'
+                  ? 'border border-amber-400 bg-amber-950/70 text-amber-200 shadow-sm font-bold ring-1 ring-amber-400/50'
+                  : 'text-[#94a3b8] hover:bg-[#16211a] hover:text-[#e2e8f0]'
+              }`}
+            >
+              <Plane className="h-4 w-4 text-amber-400" />
+              <span>Sayap Udara &amp; CAS</span>
+              <span className="rounded bg-amber-500/20 border border-amber-400/40 px-1 py-0.2 text-[9px] font-mono font-bold text-amber-300">
+                BARU
+              </span>
+            </button>
+
+            {/* MIO Manager */}
+            <button
+              onClick={() => setActiveTab('mio_manager')}
+              className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-xs sm:text-sm font-medium transition-all ${
+                activeTab === 'mio_manager'
+                  ? 'border border-emerald-400 bg-emerald-950/70 text-emerald-200 shadow-sm font-bold ring-1 ring-emerald-400/50'
+                  : 'text-[#94a3b8] hover:bg-[#16211a] hover:text-[#e2e8f0]'
+              }`}
+            >
+              <Factory className="h-4 w-4 text-emerald-400" />
+              <span>Manajer MIO</span>
+              <span className="rounded bg-emerald-500/20 border border-emerald-400/40 px-1 py-0.2 text-[9px] font-mono font-bold text-emerald-300">
+                BARU
+              </span>
+            </button>
+
+            {/* Peace Conference Simulator */}
+            <button
+              onClick={() => setActiveTab('peace_conference')}
+              className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-xs sm:text-sm font-medium transition-all ${
+                activeTab === 'peace_conference'
+                  ? 'border border-purple-400 bg-purple-950/70 text-purple-200 shadow-sm font-bold ring-1 ring-purple-400/50'
+                  : 'text-[#94a3b8] hover:bg-[#16211a] hover:text-[#e2e8f0]'
+              }`}
+            >
+              <Landmark className="h-4 w-4 text-purple-400" />
+              <span>Konferensi Damai</span>
+              <span className="rounded bg-purple-500/20 border border-purple-400/40 px-1 py-0.2 text-[9px] font-mono font-bold text-purple-300">
+                BARU
+              </span>
+            </button>
+
+            {/* 3. Battle Planner & War Calculator */}
             <button
               onClick={() => setActiveTab('battle_planner')}
               className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-xs sm:text-sm font-medium transition-all ${
@@ -138,9 +281,6 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Swords className="h-4 w-4 text-[#ef4444]" />
               <span>Battle Planner &amp; Perang</span>
-              <span className="rounded bg-[#ef4444]/20 border border-[#ef4444]/40 px-1 py-0.2 text-[9px] font-mono font-bold text-[#fca5a5]">
-                BARU
-              </span>
             </button>
 
             {/* 3. Tech Tree Viewer */}
