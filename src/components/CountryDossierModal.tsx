@@ -7,6 +7,9 @@ import {
 } from 'lucide-react';
 import { CountryStrategy } from '../types';
 import { HistoricalContextModal } from './HistoricalContextModal';
+import { HOI4LeaderPortrait } from './HOI4LeaderPortrait';
+import { HOI4LeaderDossierModal } from './HOI4LeaderDossierModal';
+import { hoi4LeaderService } from '../services/hoi4LeaderService';
 
 interface CountryDossierModalProps {
   country: CountryStrategy;
@@ -23,6 +26,7 @@ export const CountryDossierModal: React.FC<CountryDossierModalProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'context' | 'rich' | 'war' | 'politics' | 'timeline' | 'resources'>('context');
   const [isHistoricalModalOpen, setIsHistoricalModalOpen] = useState<boolean>(false);
+  const [isLeaderDossierOpen, setIsLeaderDossierOpen] = useState<boolean>(false);
 
   const isMajor = ['ger', 'sov', 'usa', 'eng', 'jap', 'ita', 'fra'].includes(country.id);
 

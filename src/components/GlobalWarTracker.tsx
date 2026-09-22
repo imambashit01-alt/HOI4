@@ -1,10 +1,15 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Globe, Shield, Swords, Skull, Flag, TrendingUp, TrendingDown,
   AlertTriangle, CheckCircle2, Flame, RefreshCw, BarChart3,
   Sliders, Award, Radio, Info, Eye, Layers, Percent, Activity,
-  Crosshair, ShieldAlert, Zap, BookOpen, Clock, HeartHandshake
+  Crosshair, ShieldAlert, Zap, BookOpen, Clock, HeartHandshake,
+  Compass, MapPin
 } from 'lucide-react';
+import { WW2RealMapTimeline } from './WW2RealMapTimeline';
+import { HOI4LeaderPortrait } from './HOI4LeaderPortrait';
+import { HOI4LeaderDossierModal } from './HOI4LeaderDossierModal';
+import { hoi4LeaderService } from '../services/hoi4LeaderService';
 
 export interface MajorNationWarData {
   tag: string;
@@ -560,6 +565,28 @@ export const GlobalWarTracker: React.FC = () => {
   const [filterFaction, setFilterFaction] = useState<string>('all');
   const [selectedNationTag, setSelectedNationTag] = useState<string>('GER');
 
+  // Tab Switcher between Timeline Real Map and 7 Majors Simulator
+  const [trackerTab, setTrackerTab] = useState<'timeline_map' | 'majors_simulator' | 'all'>('timeline_map');
+  const [syncToastMessage, setSyncToastMessage] = useState<string | null>(null);
+
+  // Leader Dossier Modal state
+  const [isDossierOpen, setIsDossierOpen] = useState<boolean>(false);
+  const [selectedDossierTag, setSelectedDossierTag] = useState<string>('GER');
+
+  // Preload all 7 major nation portraits in background
+  useEffect(() => {
+    hoi4LeaderService.preloadAllMajors();
+  }, []);
+
+  const handleSyncWithSimulation = (scenarioId: string, year: number) => {
+    const targetScenario = WAR_SCENARIOS.find(s => s.id === scenarioId);
+    if (targetScenario) {
+      setSelectedScenarioId(scenarioId);
+      setSyncToastMessage(`Data simulasi berhasil disinkronkan dengan Linimasa Sejarah: [Tahun ${targetScenario.year}] ${targetScenario.title}`);
+      setTimeout(() => setSyncToastMessage(null), 6000);
+    }
+  };
+
   // Dynamic War Modifiers (Playthrough interactive state)
   const [strategicBombingTarget, setStrategicBombingTarget] = useState<boolean>(false);
   const [convoyRaidingSevere, setConvoyRaidingSevere] = useState<boolean>(false);
@@ -749,16 +776,105 @@ export const GlobalWarTracker: React.FC = () => {
         </div>
       </div>
 
-      {/* Seven Majors Cards Grid */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-serif text-base font-bold text-[#fef3c7] flex items-center gap-2">
-            <Flag className="h-5 w-5 text-red-400" /> Ringkasan 7 Negara Utama (The Seven Majors)
-          </h3>
-          <span className="text-xs font-mono text-[#94a3b8]">
-            Klik pada kartu negara untuk inspeksi taktis mendalam
-          </span>
+      {/* Sync Notification Toast Banner */}
+      {syncToastMessage && (
+        <div className="p-3.5 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-200 text-xs font-mono flex items-center justify-between shadow-lg animate-fade-in">
+          <div className="flex items-center gap-2.5">
+            <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
+            <span className="font-semibold">{syncToastMessage}</span>
+          </div>
+          <button
+            onClick={() => setSyncToastMessage(null)}
+            className="text-emerald-400 hover:text-white px-2 py-0.5 rounded hover:bg-emerald-900/40 text-xs"
+          >
+            ✕ Tutup
+          </button>
         </div>
+      )}
+
+      {/* Sub-Navigation: Timeline & Real Map vs 7 Majors Simulator */}
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-[#0a0f1d] p-2 rounded-xl border border-[#273256] shadow-lg">
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => setTrackerTab('timeline_map')}
+            className={`px-4 py-2 rounded-lg font-mono text-xs font-bold flex items-center gap-2 transition-all ${
+              trackerTab === 'timeline_map'
+                ? 'bg-gradient-to-r from-amber-600 to-red-600 text-white shadow-lg shadow-amber-900/40 border border-amber-400/40'
+                : 'bg-white/5 text-[#94a3b8] hover:text-white hover:bg-white/10'
+            }`}
+          >
+            <Compass className="h-4 w-4 text-amber-300" />
+            <span>Peta Realistis PD II & Linimasa Sejarah</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-400/30 text-amber-200 border border-amber-400/40 font-black">
+              REAL MAP WW2
+            </span>
+          </button>
+
+          <button
+            onClick={() => setTrackerTab('majors_simulator')}
+            className={`px-4 py-2 rounded-lg font-mono text-xs font-bold flex items-center gap-2 transition-all ${
+              trackerTab === 'majors_simulator'
+                ? 'bg-gradient-to-r from-red-600 to-rose-700 text-white shadow-lg shadow-red-900/40 border border-red-400/40'
+                : 'bg-white/5 text-[#94a3b8] hover:text-white hover:bg-white/10'
+            }`}
+          >
+            <Flag className="h-4 w-4 text-red-300" />
+            <span>Matriks 7 Negara Adidaya & Simulator Modifikator</span>
+          </button>
+
+          <button
+            onClick={() => setTrackerTab('all')}
+            className={`px-3.5 py-2 rounded-lg font-mono text-xs font-medium flex items-center gap-1.5 transition-all ${
+              trackerTab === 'all'
+                ? 'bg-blue-600 text-white shadow border border-blue-400/40'
+                : 'bg-white/5 text-[#94a3b8] hover:text-white hover:bg-white/10'
+            }`}
+          >
+            <Layers className="h-4 w-4" />
+            <span className="hidden sm:inline">Tampilan Terpadu (Keduanya)</span>
+          </button>
+        </div>
+
+        <div className="text-[11px] font-mono text-slate-400 px-2 flex items-center gap-1.5">
+          <Clock className="h-3.5 w-3.5 text-amber-400" />
+          <span>Skenario: <strong className="text-white">[{scenario.year}] {scenario.title.split(':')[0]}</strong></span>
+        </div>
+      </div>
+
+      {/* 1. Real WWII Map & Historical Timeline View */}
+      {(trackerTab === 'timeline_map' || trackerTab === 'all') && (
+        <WW2RealMapTimeline onSyncWithSimulation={handleSyncWithSimulation} />
+      )}
+
+      {/* 2. Seven Majors Cards Grid & Simulator View */}
+      {(trackerTab === 'majors_simulator' || trackerTab === 'all') && (
+        <div className="space-y-6">
+          {/* Seven Majors Cards Grid */}
+          <div>
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+              <div className="flex items-center gap-2">
+                <Flag className="h-5 w-5 text-red-400" />
+                <h3 className="font-serif text-base font-bold text-[#fef3c7]">
+                  Ringkasan 7 Negara Utama (The Seven Majors)
+                </h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setSelectedDossierTag(selectedNationTag);
+                    setIsDossierOpen(true);
+                  }}
+                  className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-amber-600/30 to-amber-700/30 hover:from-amber-600/50 hover:to-amber-700/50 border border-amber-500/50 text-amber-200 font-mono text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm"
+                  title="Buka galeri portret resmi dan sifat pemimpin 7 negara adidaya"
+                >
+                  <Award className="h-4 w-4 text-amber-400" />
+                  <span>Portret Pemimpin HOI4 (7 Majors)</span>
+                </button>
+                <span className="text-xs font-mono text-[#94a3b8] hidden sm:inline">
+                  Klik kartu untuk inspeksi taktis
+                </span>
+              </div>
+            </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3">
           {displayNations.map((nation) => {
@@ -771,28 +887,56 @@ export const GlobalWarTracker: React.FC = () => {
               <div
                 key={nation.tag}
                 onClick={() => setSelectedNationTag(nation.tag)}
-                className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
+                className={`p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between ${
                   isSelected
-                    ? 'border-red-500 bg-red-950/50 shadow-lg ring-2 ring-red-500/50 transform -translate-y-0.5'
+                    ? 'border-amber-500 bg-gradient-to-b from-[#2a1b10] to-[#120a10] shadow-lg ring-2 ring-amber-500/50 transform -translate-y-0.5'
                     : 'border-[#273256] bg-[#0c1224] hover:border-slate-500 hover:bg-[#111933]'
                 }`}
               >
-                {/* Nation Tag & Flag */}
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl">{nation.flag}</span>
-                  <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded font-bold uppercase ${
-                    nation.faction === 'Axis' ? 'bg-red-500/20 text-red-300 border border-red-500/30' :
-                    nation.faction === 'Allies' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' :
-                    nation.faction === 'Comintern' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' :
-                    'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                  }`}>
-                    {nation.tag}
-                  </span>
-                </div>
+                {/* Nation Leader Portrait & Flag Badge */}
+                <div>
+                  <div className="flex items-start justify-between gap-1 mb-2">
+                    <HOI4LeaderPortrait
+                      tag={nation.tag}
+                      size="sm"
+                      showNameplate={false}
+                      showTraitsOnHover={true}
+                      showStatusLamp={true}
+                      showIdeologyBadge={true}
+                      interactive={true}
+                      onClick={() => {
+                        setSelectedDossierTag(nation.tag);
+                        setIsDossierOpen(true);
+                      }}
+                    />
+                    <div className="flex flex-col items-end">
+                      <span className="text-xl" title={nation.name}>{nation.flag}</span>
+                      <span className={`text-[9px] font-mono px-1.5 py-0.2 rounded font-bold uppercase mt-1 ${
+                        nation.faction === 'Axis' ? 'bg-red-500/20 text-red-300 border border-red-500/30' :
+                        nation.faction === 'Allies' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' :
+                        nation.faction === 'Comintern' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' :
+                        'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                      }`}>
+                        {nation.tag}
+                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedDossierTag(nation.tag);
+                          setIsDossierOpen(true);
+                        }}
+                        className="mt-1 text-[9px] font-mono text-amber-400 hover:text-amber-200 underline"
+                        title="Buka Dokumen Pemimpin"
+                      >
+                        Dokumen ↗
+                      </button>
+                    </div>
+                  </div>
 
-                <div className="mt-2">
-                  <h4 className="font-bold text-xs text-white truncate">{nation.name.split(' ')[0]}</h4>
-                  <span className="text-[10px] font-mono text-[#94a3b8]">{nation.faction}</span>
+                  <div>
+                    <h4 className="font-bold text-xs text-white truncate">{nation.name.split(' ')[0]}</h4>
+                    <span className="text-[10px] font-mono text-[#94a3b8]">{nation.faction}</span>
+                  </div>
                 </div>
 
                 {/* War Support & Stability Mini Meters */}
@@ -850,21 +994,44 @@ export const GlobalWarTracker: React.FC = () => {
         {/* Column 1: Deep Nation Analysis & Equipment Losses (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
           <div className="rounded-xl border border-[#273256] bg-[#090e1c] p-5 shadow-lg space-y-5">
-            {/* Header info */}
-            <div className="flex items-center justify-between border-b border-[#1b2542] pb-4">
-              <div className="flex items-center gap-3">
-                <span className="text-4xl">{activeNation.flag}</span>
+            {/* Header info with HOI4 Leader Portrait */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#1b2542] pb-4 gap-4">
+              <div className="flex items-center gap-3.5">
+                <HOI4LeaderPortrait
+                  tag={activeNation.tag}
+                  size="md"
+                  showNameplate={true}
+                  showTraitsOnHover={true}
+                  showStatusLamp={true}
+                  showIdeologyBadge={true}
+                  interactive={true}
+                  onClick={() => {
+                    setSelectedDossierTag(activeNation.tag);
+                    setIsDossierOpen(true);
+                  }}
+                />
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="font-serif text-lg font-bold text-[#fef3c7]">{activeNation.name}</h3>
                     <span className="px-2 py-0.5 rounded text-xs font-mono font-bold bg-white/10 text-white">
                       Tag: {activeNation.tag}
                     </span>
+                    <span className="text-xl">{activeNation.flag}</span>
                   </div>
                   <p className="text-xs text-[#94a3b8] mt-0.5">
                     Blok Faksi: <strong className="text-white">{activeNation.faction}</strong> | Divisi Aktif:{' '}
                     <strong className="text-emerald-300">{activeNation.activeDivisions} Divisi</strong>
                   </p>
+                  <button
+                    onClick={() => {
+                      setSelectedDossierTag(activeNation.tag);
+                      setIsDossierOpen(true);
+                    }}
+                    className="mt-2 text-xs font-mono font-bold text-amber-300 hover:text-amber-200 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 px-2.5 py-1 rounded-md flex items-center gap-1.5 transition-all w-fit shadow-sm"
+                  >
+                    <Award className="h-3.5 w-3.5 text-amber-400" />
+                    <span>Buka Dokumen Pemimpin & Sifat HOI4</span>
+                  </button>
                 </div>
               </div>
 
@@ -1121,6 +1288,16 @@ export const GlobalWarTracker: React.FC = () => {
           </div>
         </div>
       </div>
+        </div>
+      )}
+
+      {/* HOI4 Leader Dossier Modal */}
+      <HOI4LeaderDossierModal
+        isOpen={isDossierOpen}
+        initialTag={selectedDossierTag}
+        onClose={() => setIsDossierOpen(false)}
+        onSelectNation={(tag) => setSelectedNationTag(tag)}
+      />
     </div>
   );
 };

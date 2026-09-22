@@ -122,6 +122,8 @@ export interface CountryStrategy {
   flagSymbol: string;
   ideology: 'Fascism' | 'Communism' | 'Democratic' | 'Non-Aligned' | string;
   leader: string;
+  leaderTitle?: string;
+  portraitUrl?: string;
   startingCivilianFactories: number;
   startingMilitaryFactories: number;
   startingDockyards: number;
